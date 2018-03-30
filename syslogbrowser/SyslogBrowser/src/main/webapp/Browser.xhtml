@@ -1,0 +1,547 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:ice="http://www.icesoft.com/icefaces/component"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+   <body>
+
+      <ui:composition template="./layout/pageTemplate.xhtml">
+
+         <ui:define name="content">
+            <ice:outputText 
+               rendered="#{!browserBean.ips}"
+               value="Need to set up user ip addresses to browse."/>
+
+            <ice:panelGroup rendered="#{browserBean.ips}">
+
+               <!-- *********************************************************
+                    * Message selection filters
+                    ***************************************************** -->
+
+               <ice:panelCollapsible
+                  id="filterPanel"
+                  expanded="#{browserBean.expandFilterPanel}">
+                  <f:facet name="header">
+                     <ice:panelGroup>
+                        <ice:outputText value="Audit message list filters"/>
+                     </ice:panelGroup>
+                  </f:facet>
+
+                  <ice:panelGrid columns="3">
+
+                     <ice:panelGrid columns="3">
+
+                        <ice:outputLabel value="IP Address" for="fa"/>
+                        <ice:selectOneMenu id="fa" 
+                                           value="#{browserBean.user.filters.address}">
+                           <f:selectItems value="#{browserBean.ipsSelections}"/>
+                        </ice:selectOneMenu>
+                        <ice:commandButton
+                           value="Clear IP" style="width: 100%"
+                           actionListener="#{browserBean.clearIpSelection}"/>
+
+                        <ice:outputLabel value="Port" for="fp"/>
+                        <ice:selectOneMenu id="fp"
+                                           value="#{browserBean.user.filters.port}">
+                           <f:selectItems value="#{applicationBean.ports}"/>
+                        </ice:selectOneMenu>
+                        <ice:commandButton
+                           value="Clear Port" style="width: 100%"
+                           actionListener="#{browserBean.clearPortSelection}"/>
+
+                        <ice:outputLabel value="Start Time" for="fst"/>
+                        <ice:outputText
+                           rendered="#{browserBean.defaultStart}"
+                           id="fstd" value="Earliest"/>
+                        <ice:commandButton
+                           rendered="#{browserBean.defaultStart}"
+                           value="Set Start" style="width: 100%"
+                           actionListener="#{browserBean.setStartTime}"/>
+                        <ice:selectInputDate
+                           rendered="#{!browserBean.defaultStart}"
+                           id="fsta"
+                           value="#{browserBean.user.filters.startTime}"
+                           renderMonthAsDropdown="true"
+                           renderYearAsDropdown="true"
+                           renderAsPopup="true">
+                           <f:convertDateTime pattern="MM/dd/yyyy HH:mm"
+                                              timeZone="#{browserBean.timeZone}"/>
+                        </ice:selectInputDate>
+
+                        <ice:commandButton
+                           rendered="#{!browserBean.defaultStart}"
+                           value="Clear Start" style="width: 100%"
+                           actionListener="#{browserBean.clearStartTime}"/>
+
+                        <ice:outputLabel value="End Time" for="fend"/>
+                        <ice:outputText
+                           rendered="#{browserBean.defaultEnd}"
+                           id="fendd" value="Latest"/>
+                        <ice:commandButton
+                           rendered="#{browserBean.defaultEnd}"
+                           value="Set End" style="width: 100%"
+                           actionListener="#{browserBean.setEndTime}"/>
+                        <ice:selectInputDate
+                           rendered="#{!browserBean.defaultEnd}"
+                           id="fenda"
+                           value="#{browserBean.user.filters.endTime}"
+                           renderMonthAsDropdown="true"
+                           renderYearAsDropdown="true"
+                           renderAsPopup="true">
+                           <f:convertDateTime pattern="MM/dd/yyyy HH:mm"
+                                              timeZone="#{browserBean.timeZone}"/>
+                        </ice:selectInputDate>
+
+                        <ice:commandButton
+                           rendered="#{!browserBean.defaultEnd}"
+                           value="Clear End" style="width: 100%"
+                           actionListener="#{browserBean.clearEndTime}"/>
+
+                     </ice:panelGrid>
+
+                     <ice:panelGrid columns ="3">
+
+                        <ice:outputLabel value="User" for="fu"
+                           rendered="#{sessionBean.admin}"/>
+                        <ice:selectOneMenu id="fu"
+                           value="#{browserBean.userDba}"
+                           rendered="#{sessionBean.admin}"
+                           partialSubmit="true"
+                           valueChangeListener="#{browserBean.userChange}">
+                           <f:selectItems value="#{applicationBean.users}"/>
+                        </ice:selectOneMenu>
+                        <ice:commandButton
+                           rendered="#{sessionBean.admin}"
+                           value="Reset User" style="width: 100%"
+                           actionListener="#{browserBean.resetUserSelection}"/>
+
+                        <ice:outputLabel value="Event Type" for="fet"/>
+                        <ice:selectOneMenu id="fet"
+                                           value="#{browserBean.user.filters.eventType}">
+                           <f:selectItems value="#{browserBean.eventTypeSelections}"/>
+                        </ice:selectOneMenu>
+                        <ice:commandButton
+                           value="Clear Event Type" style="width: 100%"
+                           actionListener="#{browserBean.clearEventTypeSelection}"/>
+
+                        <ice:outputLabel value="Event Id" for="fei"/>
+                        <ice:selectOneMenu id="fei"
+                                           value="#{browserBean.user.filters.eventId}">
+                           <f:selectItems value="#{browserBean.eventIdSelections}"/>
+                        </ice:selectOneMenu>
+                        <ice:commandButton
+                           value="Clear Event ID" style="width: 100%"
+                           actionListener="#{browserBean.clearEventIdSelection}"/>
+
+                        <ice:outputLabel value="Max rows" for="fei"/>
+                        <ice:inputText size="5" maxlength="5"
+                                       partialSubmit="true"
+                                       value="#{browserBean.user.filters.recordLimit}"/>
+                        <ice:commandButton
+                           value="Reset max rows" style="width: 100%"
+                           actionListener="#{browserBean.resetRecordLimit}"/>
+
+                     </ice:panelGrid>
+
+                     <ice:panelGrid
+                        columns="1"
+                        style="padding-left: 25px; width: 300px;">
+
+                        <ice:commandButton
+                           style="border-style: outset; border-width: 3px; border-color: silver; background-color: silver; padding: 3px; width: 100%;"
+                           value="Reset filters to defaults" 
+                           actionListener="#{browserBean.resetFilters}"/>
+
+                        <ice:commandButton
+                           style="border-style: outset; border-width: 3px; border-color: silver; background-color: silver; padding: 3px; width: 100%;"
+                           value="Save filter values" 
+                           actionListener="#{browserBean.saveFilters}"/>
+
+                        <ice:commandButton
+                           style="border-style: outset; border-width: 3px; border-color: silver; background-color: silver; padding: 3px; width: 100%;"
+                           value="Query using these settings" 
+                           actionListener="#{browserBean.queryUsingFilters}"/>
+
+
+                     </ice:panelGrid>
+
+                  </ice:panelGrid>
+
+               </ice:panelCollapsible>
+
+               <!-- *********************************************************
+                    * Message list
+                    ***************************************************** -->
+
+               <ice:panelCollapsible
+                  id="listPanel"
+                  expanded="#{browserBean.expandListPanel}">
+                  <f:facet name="header">
+                     <ice:panelGroup>
+                        <ice:outputText value="Audit message list"/>
+                     </ice:panelGroup>
+                  </f:facet>
+
+                  <ice:dataTable id="list"
+                                 var="row"
+                                 value="#{browserBean.all}"
+                                 scrollable="true"
+                                 scrollHeight="400px"
+                                 columnWidths="80px,40px,100px,75px,75px,150px,250px"
+                                 sortColumn="#{browserBean.sortColumnName}"
+                                 sortAscending="#{browserBean.ascending}">
+                     <f:facet name="header">
+                        <ice:outputText value="Messages" style="text-align: center"/>
+                     </f:facet>
+
+                     <ice:column style="width: 80px">
+
+                        <ice:rowSelector id="selected"
+                                         value="#{row.selected}"
+                                         selectionAction="#{browserBean.Selected}"
+                                         preStyleOnSelection="true"/>
+
+                        <f:facet name="header">
+                           <ice:commandSortHeader columnName="senderIp">
+                              <ice:outputText value="Sender IP"/>
+                           </ice:commandSortHeader>
+                        </f:facet>
+                        <ice:outputText value="#{row.senderIp}"/>
+                     </ice:column>
+
+                     <ice:column style="width: 40px">
+                        <f:facet name="header">
+                           <ice:commandSortHeader columnName="collectorPort">
+                              <ice:outputText value="Port"/>
+                           </ice:commandSortHeader>
+                        </f:facet>
+                        <ice:outputText value="#{row.collectorPort}"/>
+                     </ice:column>
+
+                     <ice:column style="width: 100px">
+                        <f:facet name="header">
+                           <ice:commandSortHeader columnName="arrivalTime">
+                              <ice:outputText value="Time Recvd"/>
+                           </ice:commandSortHeader>
+                        </f:facet>
+                        <ice:outputText value="#{row.AT}"/>
+                     </ice:column>
+
+                     <ice:column style="width: 75px">
+                        <f:facet name="header">
+                           <ice:commandSortHeader columnName="event">
+                              <ice:outputText value="Event Type"/>
+                           </ice:commandSortHeader>
+                        </f:facet>
+                        <ice:outputText value="#{row.eventType}"/>
+                     </ice:column>
+
+                     <ice:column style="width: 75px">
+                        <f:facet name="header">
+                           <ice:outputText value="Event ID"/>
+                        </f:facet>
+                        <ice:outputText value="#{row.eventId}"/>
+                     </ice:column>
+
+                     <ice:column style="width: 150px">
+                        <f:facet name="header">
+                           <ice:outputText value="Result"/>
+                        </f:facet>
+                        <ice:outputText
+                           styleClass="#{row.resultStyle}"
+                           value="#{row.result}"/>
+                     </ice:column>
+
+                     <ice:column style="width: 250px">
+                        <f:facet name="header">
+                           <ice:outputText value="Result Message"/>
+                        </f:facet>
+                        <ice:outputText value="#{row.resultMessage}"/>
+                     </ice:column>
+
+                  </ice:dataTable>
+
+
+               </ice:panelCollapsible>
+
+               <!-- *********************************************************
+                    * Message detail information panel
+                    ***************************************************** -->
+
+               <ice:panelCollapsible
+                  id="detailPanel"
+                  expanded="#{browserBean.expandDetailPanel}">
+                  <f:facet name="header">
+                     <ice:panelGroup>
+                        <ice:outputText value="Audit message Detail"/>
+                     </ice:panelGroup>
+                  </f:facet>
+
+                  <ice:outputText
+                     rendered="#{browserBean.detail == null}"
+                     value="No message selected"
+                     style="padding: 10px; font-size: large; font-weight: bold; text-align: center; width: 500px;"/>
+
+                  <ice:panelGrid
+                     rendered="#{browserBean.detail != null}"
+                     columns="2">
+
+                     <!-- *********************************************************
+                          * Message testing results
+                          ***************************************************** -->
+
+                     <ice:panelGroup styleClass="erlPnlGrp" style="width: 600px;">
+
+                        <ice:panelGrid
+                           columns="2" styleClass="erlPnlGrd"
+                           cellpadding="2px">
+                           <ice:outputLabel value="Sender IP"/>
+                           <ice:outputText value="#{browserBean.detail.senderIp}"/>
+                           <ice:outputLabel value="Collector IP"/>
+                           <ice:outputText value="#{browserBean.detail.collectorIp}"/>
+                           <ice:outputLabel value="Collector port"/>
+                           <ice:outputText value="#{browserBean.detail.collectorPort}"/>
+                           <ice:outputLabel value="Arrival time"/>
+                           <ice:outputText value="#{browserBean.detail.AT}"/>
+                        </ice:panelGrid>
+
+                        <ice:panelGrid
+                           rendered ="#{not empty browserBean.detail.errorMessage}"
+                           columns="2" styleClass="erlPnlGrd"
+                           cellpadding="2px">
+                           <ice:outputLabel value="Processing failure"/>
+                           <ice:outputText value="#{browserBean.detail.errorMessage}"/>
+                        </ice:panelGrid>
+
+                        <ice:panelGrid
+                           rendered ="#{browserBean.detail.rfc3164Parse > 0}"
+                           columns="2" styleClass="#{browserBean.getResultStyle(browserBean.detail.rfc3164Parse, browserBean.detail.rfc3164ErrorMessage)}"
+                           cellpadding="2px">
+
+                           <ice:outputLabel value="RFC3164 parse"/>
+                           <ice:outputText value="#{browserBean.getParseResult(browserBean.detail.rfc3164Parse, browserBean.detail.rfc3164ErrorMessage)}"/>
+
+                           <ice:outputLabel
+                              rendered="#{not empty browserBean.detail.rfc3164ErrorMessage}"
+                              value="Error Message"/>
+                           <ice:outputText
+                              rendered="#{not empty browserBean.detail.rfc3164ErrorMessage}"
+                              value="#{browserBean.detail.rfc3164ErrorMessage}"/>
+
+                           <ice:outputLabel
+                              rendered="#{not empty browserBean.detail.rfc3164ErrorSubstring}"
+                              value="Error Context"/>
+                           <ice:outputText
+                              rendered="#{not empty browserBean.detail.rfc3164ErrorSubstring}"
+                              value="#{browserBean.detail.rfc3164ErrorSubstring}"/>
+
+                           <ice:outputLabel
+                              rendered="#{browserBean.detail.rfc3164ErrorLocation >= 0}"
+                              value="Error Column"/>
+                           <ice:outputText
+                              rendered="#{browserBean.detail.rfc3164ErrorLocation >= 0}"
+                              value="#{browserBean.detail.rfc3164ErrorLocation}"/>
+                        </ice:panelGrid>
+
+                        <ice:panelGrid
+                           rendered ="#{browserBean.detail.rfc5424Parse > 0}"
+                           columns="2" styleClass="#{browserBean.getResultStyle(browserBean.detail.rfc5424Parse, browserBean.detail.rfc5424ErrorMessage)}"
+                           cellpadding="2px">
+
+                           <ice:outputLabel value="RFC5424 parse"/>
+                           <ice:outputText value="#{browserBean.getParseResult(browserBean.detail.rfc5424Parse, browserBean.detail.rfc5424ErrorMessage)}"/>
+
+                           <ice:outputLabel
+                              rendered="#{not empty browserBean.detail.rfc5424ErrorMessage}"
+                              value="Error Message"/>
+                           <ice:outputText
+                              rendered="#{not empty browserBean.detail.rfc5424ErrorMessage}"
+                              value="#{browserBean.detail.rfc5424ErrorMessage}"/>
+
+                           <ice:outputLabel
+                              rendered="#{not empty browserBean.detail.rfc5424ErrorSubstring}"
+                              value="Error Context"/>
+                           <ice:outputText
+                              rendered="#{not empty browserBean.detail.rfc5424ErrorSubstring}"
+                              value="#{browserBean.detail.rfc5424ErrorSubstring}"/>
+
+                           <ice:outputLabel
+                              rendered="#{browserBean.detail.rfc5424ErrorLocation >= 0}"
+                              value="Error Column"/>
+                           <ice:outputText
+                              rendered="#{browserBean.detail.rfc5424ErrorLocation >= 0}"
+                              value="#{browserBean.detail.rfc5424ErrorLocation}"/>
+                        </ice:panelGrid>
+
+                        <ice:panelGrid
+                           rendered="#{browserBean.detail.xmlParse > 0}"
+                           styleClass="#{browserBean.getResultStyle(browserBean.detail.xmlParse, browserBean.detail.xmlParseErrorMessage)}"
+                           columns="2" cellpadding="2px">
+
+                           <ice:outputLabel value="XML parse"/>
+                           <ice:outputText value="#{browserBean.getParseResult(browserBean.detail.xmlParse, browserBean.detail.xmlParseErrorMessage)}"/>
+
+                           <ice:outputLabel
+                              rendered="#{not empty browserBean.detail.xmlParseErrorMessage}"
+                              value="Error Message"/>
+                           <ice:outputText
+                              rendered="#{not empty browserBean.detail.xmlParseErrorMessage}"
+                              value="#{browserBean.detail.xmlParseErrorMessage}"/>
+
+                           <ice:outputLabel
+                              rendered="#{browserBean.detail.xmlParseLine >= 0}"
+                              value="Error Line/Col"/>
+                           <ice:outputText
+                              rendered="#{browserBean.detail.xmlParseLine >= 0}"
+                              value="#{browserBean.detail.xmlParseLine} #{browserBean.detail.xmlParseColumn}"/>
+                        </ice:panelGrid>
+
+                        <ice:panelGrid
+                           rendered="#{browserBean.detail.rfc3881Validate > 0}"
+                           styleClass="#{browserBean.getResultStyle(browserBean.detail.rfc3881Validate, browserBean.detail.rfc3881ValidateErrorMessage)}"
+                           columns="2" cellpadding="2px">
+
+                           <ice:outputLabel value="RFC3881 Validate"/>
+                           <ice:outputText value="#{browserBean.getParseResult(browserBean.detail.rfc3881Validate, browserBean.detail.rfc3881ValidateErrorMessage)}"/>
+
+                           <ice:outputLabel
+                              rendered="#{not empty browserBean.detail.rfc3881ValidateErrorMessage}"
+                              value="Error Message"/>
+                           <ice:outputText
+                              rendered="#{not empty browserBean.detail.rfc3881ValidateErrorMessage}"
+                              value="#{browserBean.detail.rfc3881ValidateErrorMessage}"/>
+
+                           <ice:outputLabel
+                              rendered="#{browserBean.detail.rfc3881ValidateLine >= 0}"
+                              value="Error Line/Col"/>
+                           <ice:outputText
+                              rendered="#{browserBean.detail.rfc3881ValidateLine >= 0}"
+                              value="#{browserBean.detail.rfc3881ValidateLine} #{browserBean.detail.rfc3881ValidateColumn}"/>
+                        </ice:panelGrid>
+
+                        <ice:panelGrid
+                           rendered="#{browserBean.detail.dicomValidate > 0}"
+                           styleClass="#{browserBean.getResultStyle(browserBean.detail.dicomValidate, browserBean.detail.dicomValidateErrorMessage)}"
+                           columns="2" cellpadding="2px">
+
+                           <ice:outputLabel value="DICOM Validate"/>
+                           <ice:outputText value="#{browserBean.getParseResult(browserBean.detail.dicomValidate, browserBean.detail.dicomValidateErrorMessage)}"/>
+
+                           <ice:outputLabel
+                              rendered="#{not empty browserBean.detail.dicomValidateErrorMessage}"
+                              value="Error Message"/>
+                           <ice:outputText
+                              rendered="#{not empty browserBean.detail.dicomValidateErrorMessage}"
+                              value="#{browserBean.detail.dicomValidateErrorMessage}"/>
+
+                           <ice:outputLabel
+                              rendered="#{browserBean.detail.dicomValidateLine >= 0}"
+                              value="Error Line/Col"/>
+                           <ice:outputText
+                              rendered="#{browserBean.detail.dicomValidateLine >= 0}"
+                              value="#{browserBean.detail.dicomValidateLine} #{browserBean.detail.dicomValidateColumn}"/>
+                        </ice:panelGrid>
+
+                        <ice:panelGrid
+                           styleClass="erlPnlGrd"
+                           cellpadding="2px">
+                           <ice:panelGrid columns="2">
+                              <ice:outputLabel style="margin-right: 10px" value="ATNA Event Type"/>
+                              <ice:outputText value="#{browserBean.detail.eventType}"/>
+                              <ice:outputLabel style="margin-right: 10px" value="ATNA Event ID"/>
+                              <ice:outputText value="#{browserBean.detail.eventId}"/>
+                           </ice:panelGrid>
+
+                           <!-- The ATNA message name will have the generic message name
+                                if no schematrons exists. If they do exist, it will have
+                                a list of all the names for the schematrons
+                           -->
+
+
+                           <ice:panelGrid columns="1">
+                              <ice:outputText
+                                 rendered="#{browserBean.detail.numberSchematrons() == 0}"
+                                 value="#{browserBean.detail.messageName}"/>
+                              <ice:dataTable
+                                 rendered="#{browserBean.detail.numberSchematrons() > 0}"
+                                 var="schema"
+                                 value="#{browserBean.detail.schematrons}">
+                                 <ice:column>
+                                    <ice:outputText value="#{schema.auditMessageName}"/>
+
+                                    <ice:panelGrid
+                                       rendered="#{schema.schematronValidate > 0}"
+                                       styleClass="#{browserBean.getResultStyle(schema.schematronValidate, schema.schematronValidateErrorMessage)}"
+                                       columns="2" cellpadding="2px">
+
+                                       <ice:outputLabel value="Validate"/>
+                                       <ice:outputText value="#{browserBean.getParseResult(schema.schematronValidate, schema.schematronValidateErrorMessage)}"/>
+
+                                       <ice:outputLabel
+                                          rendered="${browserBean.prtEm(schema.schematronValidate, schema.schematronValidateErrorMessage)}"
+                                          value="Message(s)"/>
+                                       <ice:panelGroup 
+                                          rendered="${browserBean.prtEm(schema.schematronValidate, schema.schematronValidateErrorMessage)}">
+                                          <pre style="width: 90%">
+                                             #{schema.schematronValidateErrorMessage}
+                                          </pre>
+                                       </ice:panelGroup>
+
+                                       <ice:outputLabel
+                                          rendered="#{schema.schematronValidateLine >= 0}"
+                                          value="Error Line/Col"/>
+                                       <ice:outputText
+                                          rendered="#{schema.schematronValidateLine >= 0}"
+                                          value="#{schema.schematronValidateLine} #{schema.schematronValidateColumn}"/>
+                                    </ice:panelGrid>
+                                 </ice:column>
+
+                              </ice:dataTable>
+                           </ice:panelGrid>
+                        </ice:panelGrid>
+
+                        <!-- Button to switch raw/xml message display -->
+
+                        <ice:commandButton
+                           rendered="#{not empty browserBean.detail.xmlMessage}"
+                           style="border-style: outset; border-width: 3px; border-color: silver; background-color: silver; padding: 3px; width: 100%;"
+                           value="#{browserBean.buttonValue()}"
+                           actionListener="#{browserBean.flipMessage}"/>
+
+                        <ice:commandButton
+                           style="border-style: outset; border-width: 3px; border-color: silver; background-color: silver; padding: 3px; width: 100%;"
+                           value="Delete this message"
+                           actionListener="#{browserBean.clearMessage}"/>
+
+                     </ice:panelGroup>
+
+                     <!-- *********************************************************
+                          * Message
+                          ***************************************************** -->
+
+                     <ice:panelGroup rendered="#{browserBean.displayXml}"
+                                     style="border: solid 1px; margin-top: 1px; padding: 2px; background-color: #cac8c8;">
+                        <pre style="width: 100%">
+                           #{browserBean.getMSG()}
+                        </pre>
+                     </ice:panelGroup>
+
+                     <ice:panelGroup rendered="#{!browserBean.displayXml}"
+                                     style="border: solid 1px; margin-top: 1px; padding: 2px; background-color: #cac8c8;">
+                        #{browserBean.detail.rawMessage}
+                     </ice:panelGroup>
+
+
+                  </ice:panelGrid>
+
+               </ice:panelCollapsible>
+
+            </ice:panelGroup>
+         </ui:define>
+
+      </ui:composition>
+
+   </body>
+</html>

@@ -1,0 +1,23 @@
+<!-- User message based SampleName="ITI-41 Document Repository/Recipient audit message" -->
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AuditMessage>
+	<EventIdentification EventDateTime='${timeStamp}' EventOutcomeIndicator="0" EventActionCode="C">
+		<EventID codeSystemName="DCM" displayName="Import" code="110107"/>
+		<EventTypeCode codeSystemName="IHE Transactions" displayName="Provide and Register Document Set-b" code="ITI-41"/>
+	</EventIdentification>
+	<ActiveParticipant NetworkAccessPointTypeCode="2" NetworkAccessPointID="128.128.001.12" UserIsRequestor="true" UserID="urn:uuid:D7CC8AC25323B1F77D1292343229921">
+		<RoleIDCode codeSystemName="DCM" displayName="Source" code="110153"/>
+	</ActiveParticipant>
+	<ActiveParticipant NetworkAccessPointTypeCode="2" NetworkAccessPointID="127.0.0.1" UserIsRequestor="false" AlternativeUserID="1636" UserID="http://localhost:8080/DocumentRepository_Service/XDSRepositoryService">
+		<RoleIDCode codeSystemName="DCM" displayName="Destination" code="110152"/>
+	</ActiveParticipant>
+	<AuditSourceIdentification AuditEnterpriseSiteID="" AuditSourceID="SUN PIX/PDQ">
+		<AuditSourceTypeCode code="1"/>
+	</AuditSourceIdentification>
+	<ParticipantObjectIdentification ParticipantObjectID='TestPatient1^^^&amp;&amp;1.3.6.1.4.1.21367.13.20.1000&amp;ISO' ParticipantObjectTypeCodeRole="1" ParticipantObjectTypeCode="1">
+		<ParticipantObjectIDTypeCode codeSystemName="RFC-3881" displayName="Patient Number" code="2"/>
+	</ParticipantObjectIdentification>
+	<ParticipantObjectIdentification ParticipantObjectID='11' ParticipantObjectTypeCodeRole="20" ParticipantObjectTypeCode="2">
+		<ParticipantObjectIDTypeCode codeSystemName="IHE XDS Metadata" displayName="submission set classificationNode" code="urn:uuid:a54d6aa5-d40d-43f9-88c5-b4633d873bdd"/>
+	</ParticipantObjectIdentification>
+</AuditMessage>

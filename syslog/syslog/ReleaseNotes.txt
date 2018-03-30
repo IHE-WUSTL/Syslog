@@ -1,0 +1,33 @@
+**********************************************************************
+* syslog software release notes                              R Moulton
+**********************************************************************
+
+***** Release 2.0
+
+Added capacity to validate against a modified version of the DICOM
+schema in PS 3.15 Annex A.5.  See
+
+http://ihewiki.wustl.edu/wiki/index.php/Syslog_Collector
+
+for details.
+
+Added columns to syslog table to support this additional validation. The
+syslog table should be deleted prior to running this release for the first 
+time. SyslogCollector will recreate it.
+
+Test messages in SyslogSender have been converted to the DICOM format. Old
+RFC-3881 based messages have been archived in the reference directory.
+
+
+***** Release 2.1
+
+Changed all ActiveParticipant@UserIsRequestor to "not specialized" per 
+CP-ITI-587. 
+
+PID V3 PIX Mgr / Doc Registry Audit Msg (ITI-44/110110) TF-2b 3.44.5.1.2 
+validation was incorrectly reporting an empty AlternativeUserID in the 
+Destination as being in the Source.
+
+The Schematron test for Registry Stored Query Document Registry Audit Msg 
+(ITI-18/110112) incorrectly referenced TF-2a 3.18.5.1.1; It should reference 
+TF-2a 3.18.5.1.2.

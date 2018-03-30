@@ -1,0 +1,42 @@
+
+<AuditMessage>
+<EventIdentification EventActionCode="R" EventDateTime="2011-11-15T03:05:01.7Z" EventOutcomeIndicator="0">
+<EventID code="110106" codeSystemName="DCM" displayName="Export"></EventID>
+</EventIdentification>
+<ActiveParticipant UserID="CCT@QCPR" UserName="Thayer,ChaCha" UserIsRequestor="true" NetworkAccessPointID="QUADRAMED\QMLT-CTHAYER" NetworkAccessPointTypeCode="1">
+<RoleIDCode code="110153" codeSystemName="DCM" displayName="Source"></RoleIDCode>
+</ActiveParticipant>
+<ActiveParticipant UserID="3184" UserName="QuadraMed QCPR" UserIsRequestor="false" NetworkAccessPointID="QMLT-LAVYSHOW" NetworkAccessPointTypeCode="1">
+<RoleIDCode code="110153" codeSystemName="DCM" displayName="Source"></RoleIDCode>
+</ActiveParticipant>
+<ActiveParticipant UserID="Print Queue 1" UserName="AOS file: :reports:?list.$u.$zks" UserIsRequestor="false">
+<RoleIDCode code="110154" codeSystemName="DCM" displayName="Destination Media"></RoleIDCode>
+</ActiveParticipant>
+<AuditSourceIdentification AuditSourceID="2.16.840.1.113883.3.231.2.0.71"></AuditSourceIdentification>
+<ParticipantObjectIdentification ParticipantObjectID="2.16.840.1.113883.3.231.2.0.71.4.6.632" ParticipantObjectTypeCode="2" ParticipantObjectTypeCodeRole="3">
+<ParticipantObjectIDTypeCode code="8"></ParticipantObjectIDTypeCode>
+<!-- <ParticipantObjectName>GEN - ADT Notice for Visit Creation~</ParticipantObjectName> -->
+<ParticipantObjectQuery>HgEGATUAcDEWATE3N/8zMzL/Aco1MzkyMjA2MjQBpQEGATUAeDGdAUNDVAE4OTg3MDEwMwExMDMy
+//9BbHBoYSxBbGFuAQExMjEgTWFpbiBTdHJlZXQDQ2FtYXJpbGxvA1ZlbnR1cmEDQ0EDVS5TLkEu
+AzkzMDEwAwMDATgwNTk4NzY1NDEBAU0BNzU0Njg5NjCEATU0OTg3NTc4NP////8y/////wEBAQEB
+AVBJWP////////////////8w////MzMxDAEIATUAeDEAYwIBDAEIATUAeDEAZAIBDwEIATUAeDEA
+aQUB////DQEJATUAeDEAcGYCAQ4BCgE1AHgxAHBwbAIBDAEIATUAeDEAcgIBRwEMATUAeDEwAHYA
+wDE5Af3//f/9///9///9//3//////f///f/9//3//////////////f/9//3///3////////9////
+//0SAQ4BNQB4MTAAdgDAMQBpAgETAQ4BNQB4MTAAdgDAMQBwAwH95wEGATUAeDLfATE3N////0Fs
+cGhhLEFsYW4BATEyMSBNYWluIFN0cmVldANDYW1hcmlsbG8DVmVudHVyYQNDQQNVLlMuQS4DOTMw
+MTADAwMBODA1OTg3NjU0MQEBTQE3NTQ2ODk2MIQBNTQ5ODc1Nzg0/zH/Mf8xMv8x/0NhcmQsQ2h1
+Y2v/NwAxADL//////1Yx//8gMP8g/8o1MzkyMjA2MjT//////////zH/Mf8w/zH/////////////
+////MTE0////MAQ2MjQwOQQwBTExNDT////////////KNTM5MjIwNjI0DAEIATUAeDIAcAIBlQEL
+ATUAeDIAdgDAMYgBQ0NUATg5ODcwMTA0ATEwMzL/Mf8xMv//MjT//zEEODk4NzAxMDT/Y2hlc3Qg
+cGFpbv////8w//85/zEwMf81AWVtZXJnZW5jeSByb29tIC0gYWP/////////////IP8x/zEBYW1i
+dWxhbmNl//84////////yjUzOTIyMDYyNP////8x//8UAQ0BNQB4MgB2AMAxAGkFAf///x4BDQE1
+AHgyAHYAwDEAcA8BMTE0AjQCMAI3ADEAMpABBgE1AHgziAFDQ1QBODk4NzAxMDQBMTAzMv8x/zEy
+//8yNP//MQQ4OTg3MDEwNP9jaGVzdCBwYWlu/////zD//zn/MTAx/zUBZW1lcmdlbmN5IHJvb20g
+LSBhY/////////////8g/zH/MQFhbWJ1bGFuY2X//zj////////KNTM5MjIwNjI0/////zH//w8B
+CAE1AHgzAGkFAf///xkBCAE1AHgzAHAPATExNAI0AjACNwAxADIKAQYBNQB4NAIB5wEGATUAeDbf
+ATE3N////0FscGhhLEFsYW4BATEyMSBNYWluIFN0cmVldANDYW1hcmlsbG8DVmVudHVyYQNDQQNV
+LlMuQS4DOTMwMTADAwMBODA1OTg3NjU0MQEBTQE3NTQ2ODk2MIQBNTQ5ODc1Nzg0/zH/Mf8xMv8x
+/0NhcmQsQ2h1Y2v/NwAxADL//////1Yx//8gMP8g/8o1MzkyMjA2MjT//////////zH/Mf8w/zH/
+////////////////MTE0////MAQ2MjQwOQQwBTExNDT////////////KNTM5MjIwNjI0DAEIATUA
+eDYAcAIBDwELATUAeDYAdgCAMAIBEQENATUAeDYAdgCAMABjAgERAQ0BNQB4NgB2AIAwAHACARsB
+BgE1AHg4EwFDQ1QBODk4NzAxMDUBMTAzMgoBBQFpcHEDATE=</ParticipantObjectQuery></ParticipantObjectIdentification></AuditMessage>

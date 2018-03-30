@@ -1,0 +1,342 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <body>
+
+        <ui:composition template="./layout/pageTemplate.xhtml">
+
+             <ui:define name="content">
+
+            <ice:panelTabSet selectedIndex="#{userBean.selectedTab}"
+                             tabChangeListener="#{userBean.tabChangeListener}">
+
+               <!-- Add Studies -->
+
+               <ice:panelTab label="Add New Users">
+
+                  <ice:panelGrid columns="2">
+
+                     <ice:outputLabel value="Company" for="aco"/>
+                     <ice:selectOneMenu
+                        id="aco"
+                        value="#{userBean.newEntity.companyId}">
+                        <f:selectItems value="#{applicationBean.companies}"/>
+                     </ice:selectOneMenu>
+
+                     <ice:outputLabel value="User ID" for="auid"/>
+                     <ice:inputText id="auid" size="10" maxlength="10"
+                                    value="#{userBean.newEntity.userId}"/>
+
+                     <ice:outputLabel value="Password" for="apw1"/>
+                     <ice:inputSecret id="apw1" size="10" maxlength="10"
+                                    value="#{userBean.newEntity.plainTextPassword}"/>
+
+                     <ice:outputLabel value="Re-enter Password" for="apw2"/>
+                     <ice:inputSecret id="apw2" size="10" maxlength="10"
+                                    value="#{userBean.newEntity.plainTextPasswordRepeat}"/>
+
+                     <ice:outputLabel value="User Name" for="aname"/>
+                     <ice:inputText id="aname" size="25" maxlength="64"
+                                    value="#{userBean.newEntity.userName}"/>
+
+                     <ice:outputLabel value="Email" for="aEmail"/>
+                     <ice:inputText id="aEmail" size="25" maxlength="64"
+                                    value="#{userBean.newEntity.userEmail}"/>
+
+                     <ice:outputLabel value="Phone" for="aPhone"/>
+                     <ice:inputText id="aPhone" size="24" maxlength="24"
+                                        value="#{userBean.newEntity.userPhone}"/>
+
+                     <ice:outputLabel value="Administrator?" for="aAdmin"/>
+                     <ice:selectBooleanCheckbox id="aAdmin"
+                                                value="#{userBean.newEntity.admin}"/>
+
+                     <ice:commandButton value="OK"
+                                        actionListener="#{userBean.addOK}"/>
+                     <ice:commandButton value="Cancel"
+                                        actionListener="#{userBean.addCancel}"/>
+                  </ice:panelGrid>
+               </ice:panelTab>
+
+
+               <ice:panelTab label="Modify Users">
+
+                  <!-- Show table of existing users to select one for modification -->
+
+                  <ice:panelGroup rendered="#{userBean.renderSelect()}">
+
+                     <ice:panelGrid columns="2">
+
+                        <ice:dataTable id="selectTable"
+                                       var="row"
+                                       value="#{userBean.all}"
+                                       scrollable="true"
+                                       scrollHeight="310px"
+                                       columnWidths="100px, 150px, 400px"
+                                       sortColumn="#{userBean.sortColumnName}"
+                                       sortAscending="#{userBean.ascending}">
+                           <f:facet name="header">
+                              <ice:outputText value="Companies" style="text-align: center"/>
+                           </f:facet>
+
+                           <ice:column style="width: 100px">
+
+                              <ice:rowSelector id="selected"
+                                               value="#{row.selected}"
+                                               selectionAction="#{userBean.Selected}"
+                                               preStyleOnSelection="true"/>
+
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="userId">
+                                    <ice:outputText value="User Id"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{row.userId}"/>
+                           </ice:column>
+
+                           <ice:column style="width: 150px">
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="userName">
+                                    <ice:outputText value="User Name"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{row.userName}"/>
+                           </ice:column>
+
+                           <ice:column style="width: 400px">
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="companyName">
+                                    <ice:outputText value="Company Name"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{row.company.name}"/>
+                           </ice:column>
+
+                        </ice:dataTable>
+
+                        <ice:outputText rendered="#{userBean.renderMessage1()}"
+                                        value="#{userBean.message(0)}"/>
+                        <ice:outputText rendered="#{userBean.renderMessage2()}"
+                                        value="#{userBean.message(1)} #{company.name}"/>
+
+                     </ice:panelGrid>
+
+                     <!-- Action buttons -->
+
+                     <ice:panelGrid rendered="#{userBean.renderCommandButtons()}"
+                                    columns="4">
+
+                        <ice:commandButton value="Update user"
+                                           actionListener="#{userBean.chg}"/>
+                        <ice:commandButton value="Delete user"
+                                           actionListener="#{userBean.del}"/>
+                        <ice:commandButton value="Change user password"
+                                           actionListener="#{userBean.chgPassword}"/>
+                        <ice:commandButton value="Maintain user IP addresses"
+                                           actionListener="#{userBean.maintIps}"/>
+                     </ice:panelGrid>
+
+                  </ice:panelGroup>
+
+                  <!-- Modifications to user data -->
+
+                  <ice:panelGrid rendered="#{userBean.renderModify()}"
+                                 columns="2">
+
+                     <ice:outputLabel value="Company" for="cName"/>
+                     <ice:outputText id="cName"
+                                    value="#{userBean.chg.company.name}"/>
+
+                     <ice:outputLabel value="User Id" for="cuid"/>
+                     <ice:inputText id="cuid" size="25" maxlength="64"
+                                        value="#{userBean.chg.userId}"/>
+
+                     <ice:outputLabel value="User Name" for="cuname"/>
+                     <ice:inputText id="cuname" size="25" maxlength="64"
+                                        value="#{userBean.chg.userName}"/>
+
+                     <ice:outputLabel value="Email" for="cEmail"/>
+                     <ice:inputText id="cEmail" size="25" maxlength="64"
+                                        value="#{userBean.chg.userEmail}"/>
+
+                     <ice:outputLabel value="Phone" for="cPhone"/>
+                     <ice:inputText id="cPhone" size="25" maxlength="64"
+                                        value="#{userBean.chg.userPhone}"/>
+
+                     <ice:outputLabel value="Administrator?" for="cAdmin"/>
+                     <ice:selectBooleanCheckbox id="caAdmin"
+                                                value="#{userBean.chg.admin}"/>
+
+                        <ice:commandButton value="Update User"
+                                           actionListener="#{userBean.chgOk}"/>
+                        <ice:commandButton value="Cancel Update"
+                                           actionListener="#{userBean.chgDelCancel}"/>
+
+                  </ice:panelGrid>
+
+                  <!-- Delete user -->
+
+                  <ice:panelGrid rendered="#{userBean.renderDelete()}"
+                                 columns="2">
+
+                     <ice:panelGrid columns="2">
+
+                        <ice:outputText value="Company"/>
+                        <ice:outputText value="#{userBean.chg.company.name}"/>
+
+                        <ice:outputText value="User ID"/>
+                        <ice:outputText value="#{userBean.chg.userId}"/>
+
+                        <ice:outputText value="User name"/>
+                        <ice:outputText value="#{userBean.chg.userName}"/>
+
+                        <ice:outputText value="Email"/>
+                        <ice:outputText value="#{userBean.chg.userEmail}"/>
+
+                        <ice:outputText value="Phone"/>
+                        <ice:outputText value="#{userBean.chg.userPhone}"/>
+
+                        <ice:outputText value="Administrator"/>
+                        <ice:outputText value="#{userBean.chg.administrator}"/>
+
+                        <ice:commandButton value="Delete this User"
+                                           actionListener="#{userBean.delOk}"/>
+                        <ice:commandButton value="Cancel"
+                                           actionListener="#{userBean.chgDelCancel}"/>
+                     </ice:panelGrid>
+                     <ice:outputText value="#{userBean.message(2)}" escape="false"/>
+                  </ice:panelGrid>
+
+                  <!-- Change user password -->
+
+                  <ice:panelGrid rendered ="#{userBean.renderChgPassword()}"
+                                 columns ="2">
+
+                     <ice:outputText value="Company"/>
+                     <ice:outputText value="#{userBean.chg.company.name}"/>
+
+                     <ice:outputText value="User ID"/>
+                     <ice:outputText value="#{userBean.chg.userId}"/>
+
+                     <ice:outputText value="User name"/>
+                     <ice:outputText value="#{userBean.chg.userName}"/>
+
+                     <ice:outputLabel value="New Password" for="cpw1"/>
+                     <ice:inputSecret id="cpw1" size="10" maxlength="10"
+                                    value="#{userBean.chg.plainTextPassword}"/>
+
+                     <ice:outputLabel value="Re-enter New Password" for="cpw2"/>
+                     <ice:inputSecret id="cpw2" size="10" maxlength="10"
+                                    value="#{userBean.chg.plainTextPasswordRepeat}"/>
+
+                     <ice:panelGrid columns="2">
+
+                        <ice:commandButton value="Update user password"
+                                           actionListener="#{userBean.chgPwOk}"/>
+                        <ice:commandButton value="Cancel"
+                                           actionListener="#{userBean.chgDelCancel}"/>
+                     </ice:panelGrid>
+
+                  </ice:panelGrid>
+
+                  <!-- Maintain user IP addresses -->
+
+                  <ice:panelGrid rendered="#{userBean.renderMaintainIps()}"
+                                 columns="2">
+
+                     <ice:panelGrid columns="1">
+
+                        <ice:outputText value="#{userBean.chg.userId}: #{userBean.chg.userName}"/>
+                        <ice:outputText value="#{userBean.chg.company.name}"/>
+
+                        <ice:panelGrid columns="2">
+                           <ice:outputLabel value="IP Address" for="aip"/>
+                           <ice:inputText id="aip" size="15" maxlength="15"
+                                          partialSubmit="true"
+                                          value="#{userBean.newIp.address}"/>
+                           <ice:outputLabel value="Description" for="aipd"/>
+                           <ice:inputText id="aidp" size="15" maxlength="15"
+                                          value="#{userBean.newIp.description}"/>
+                           <ice:outputText value=" "/>
+                           <ice:panelGrid columns="2">
+
+                              <ice:commandButton value="Add this IP"
+                                                 disabled="#{userBean.disableAddIpButtons()}"
+                                                 actionListener="#{userBean.addIpOk}"/>
+                              <ice:commandButton value="Clear"
+                                                 disabled="#{userBean.disableAddIpButtons()}"
+                                                 actionListener="#{userBean.addIpCancel}"/>
+
+                           </ice:panelGrid>
+
+                        </ice:panelGrid>
+
+                     </ice:panelGrid>
+
+                     <ice:dataTable id ="selTable"
+                                    var="ip"
+                                    value="#{userBean.ips}"
+                                    scrollable="true"
+                                    scrollHeight="310px"
+                                    columnWidths="150px, 300px"
+                                    sortColumn="#{userBean.sortColName}"
+                                    sortAscending="#{userBean.ascend}">
+                           <f:facet name="header">
+                              <ice:outputText value="Ip addresses" style="text-align: center"/>
+                           </f:facet>
+
+                           <ice:column style="width: 150px">
+
+                              <ice:rowSelector id="select"
+                                               value="#{ip.selected}"
+                                               selectionAction="#{userBean.Select}"
+                                               preStyleOnSelection="true"/>
+
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="address">
+                                    <ice:outputText value="IP Address"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{ip.address}"/>
+                           </ice:column>
+
+                           <ice:column style="width: 300px">
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="description">
+                                    <ice:outputText value="Description"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{ip.description}"/>
+                           </ice:column>
+
+                     </ice:dataTable>
+
+                              <ice:commandButton value="Done processing IPs"
+                                                 actionListener="#{userBean.ipDone}"/>
+
+                           <ice:panelGrid columns="2">
+
+                              <ice:commandButton value="Delete selected IP"
+                                                 disabled="#{userBean.disableDelIpButtons()}"
+                                                 actionListener="#{userBean.delIpOk}"/>
+                              <ice:commandButton value="Clear"
+                                                 disabled="#{userBean.disableDelIpButtons()}"
+                                                 actionListener="#{userBean.clearSelect}"/>
+
+                           </ice:panelGrid>
+
+                  </ice:panelGrid>
+
+               </ice:panelTab>
+
+            </ice:panelTabSet>
+         </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

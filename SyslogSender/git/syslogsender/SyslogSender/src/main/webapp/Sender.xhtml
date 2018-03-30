@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ice="http://www.icesoft.com/icefaces/component"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+   <body>
+
+      <ui:composition template="./layout/pageTemplate.xhtml">
+
+         <ui:define name="content">
+         	<span style="color:red">The Syslog Sender has been updated to allow
+         	TLS messages to be sent with certificates from either of two
+         	certificate authorities:
+         	<br/> <b>* MIR2014-16 (new):</b> which creates certificates for 2015 and
+			    2016 Connectathon and Pre-connectathon testing.
+			    <br/> <b>* MIR2012-14-2 (the old one):</b> which creates certificates
+			    for 2013 and 2014 testing.<br/>
+			    Other testing tools will be updated over the next few weeks to use the
+			    new certificates. The old certificates will expire on or about
+			    October 30, 2014.
+         	</span>
+            <ice:panelGrid columns="2">
+               <ice:panelGrid columns="1">
+                  Your Syslog Collector Connection Information
+                  <ice:panelGrid columns="2">
+                     <ice:outputLabel value="IP address" for="cip"/>
+                     <ice:inputText id="cip" size="15" maxlength="15"
+                                    value="#{senderBean.collectorIP}"/>
+                     <ice:outputLabel value="Port #" for="cport"/>
+                     <ice:inputText id="cport" size="5" maxlength="5"
+                                    value="#{senderBean.port}"/>
+                     <ice:outputLabel value="Trans Type" for="cxt"/>
+                     <ice:selectOneMenu id="cxt" value="#{senderBean.xmitType}"
+                                        partialSubmit="true">
+                        <f:selectItems value="#{applicationBean.xmitTypes}"/>
+                     </ice:selectOneMenu>
+                     <ice:outputLabel value="Certificate" for="cert"
+                                      rendered="#{senderBean.TLS}"/>
+                     <ice:selectOneMenu id="cert" rendered="#{senderBean.TLS}"
+                                        value="#{senderBean.certificateName}">
+                        <f:selectItems value="#{applicationBean.certificateNames}"/>
+                     </ice:selectOneMenu>
+                  </ice:panelGrid>
+
+                  <ice:outputLabel for="smsg"
+                                   value="Sample syslog message to send"/>
+                  <ice:selectOneMenu id="smsg"
+                                     value="#{senderBean.sampleMessageFileName}">
+                     <f:selectItems value="#{applicationBean.sampleMessages}"/>
+                  </ice:selectOneMenu>
+
+                  <ice:panelGrid columns="3">
+
+                     <ice:commandButton value="Send Message"
+                                        actionListener="#{senderBean.send}"/>
+                     <ice:commandButton value="Clear"
+                                        actionListener="#{senderBean.clear}"/>
+                     <ice:commandButton
+                        rendered="#{senderBean.messageSent}"
+                        value="#{senderBean.messageButtonValue}"
+                        actionListener="#{senderBean.flipMessage}"/>
+
+                  </ice:panelGrid>
+
+               </ice:panelGrid>
+
+               <!-- *********************************************************
+                        * Message
+                        ***************************************************** -->
+               <ice:panelGroup rendered="#{senderBean.messageSent}">
+                  <ice:panelGroup rendered="#{senderBean.displayXml}"
+                                  style="border: solid 1px; margin-top: 1px; padding: 2px; background-color: #cac8c8;">
+                     <pre style="width: 100%">
+                        #{senderBean.xml}
+                     </pre>
+                  </ice:panelGroup>
+
+                  <ice:panelGroup rendered="#{!senderBean.displayXml}"
+                                  style="border: solid 1px; margin-top: 1px; padding: 2px; background-color: #cac8c8;">
+                     #{senderBean.message}
+                  </ice:panelGroup>
+               </ice:panelGroup>
+            </ice:panelGrid>
+         </ui:define>
+
+      </ui:composition>
+
+   </body>
+</html>

@@ -1,0 +1,5 @@
+This directory contains schematron files for ITI-2, Get User Authentication,
+login audit message.  This message specifies that the Event Type is 110122,
+not ITI-2 (which would be consistent with other messages). SyslogCollector
+looks up schematron using the Event Type and Event ID from the Audit message,
+so this directory is named for the Event Type. 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- ********************************************************
+     * Custom builder to generate SyslogCollector.jar file.
+     * Integrated into Eclipse.
+     ******************************************************** -->
+
+<project name="syslog" default="build" basedir=".">
+
+	<property name="package" value="SyslogCollector" />
+
+	<property name="bin.dir" value="bin" />
+	<property name="lib.dir" value="lib" />
+	<property name="dist.dir" value="${basedir}/dist"/>
+
+	<!-- location of ant contrib tasks -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${lib.dir}/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<!-- Validate bin directory -->
+	<assert message="bin directory not found">
+		<bool>
+			<available file="${bin.dir}/gov/nist/syslog" type="dir" />
+		</bool>
+	</assert>
+
+	<target name="cleanall" depends="clean" />
+
+	<target name="clean">
+		<delete file="${package}.jar" verbose="true" />
+		<delete dir="${dist.dir}"/>
+	</target>
+
+	<target name="build">
+		<mkdir dir="${dist.dir}" />
+		<jar destfile="${dist.dir}/${package}.jar" basedir="${bin.dir}" includes="gov/nist/syslog/**" />
+	</target>
+
+</project>

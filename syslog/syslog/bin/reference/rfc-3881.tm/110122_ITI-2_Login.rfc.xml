@@ -1,0 +1,21 @@
+<!-- User message based SampleName="ITI-02 User Authentication Login audit message" -->
+<?xml version="1.0" encoding="UTF-8"?>
+<AuditMessage>
+
+	<EventIdentification EventDateTime="${timeStamp}" EventOutcomeIndicator="0" EventActionCode="E">
+		<EventID code="110114" codeSystemName="DCM" displayName="UserAuthenticated" />
+		<EventTypeCode code="110122" codeSystemName="DCM" displayName="Login" />
+	</EventIdentification>
+	
+	<ActiveParticipant UserID="fe80::5999:d1ef:63de:a8bb%11" UserIsRequestor="true" NetworkAccessPointTypeCode="1" NetworkAccessPointID="125.20.175.12">
+		<RoleIDCode code="110150" codeSystemName="DCM" displayName="Application" />
+	</ActiveParticipant>
+	
+	<ActiveParticipant UserID="farley.granger@wb.com" UserIsRequestor="true">
+	</ActiveParticipant>
+	
+	<AuditSourceIdentification AuditEnterpriseSiteID="End User" AuditSourceID="farley.granger@wb.com">
+		<AuditSourceTypeCode code="1" />
+	</AuditSourceIdentification>
+	
+</AuditMessage>

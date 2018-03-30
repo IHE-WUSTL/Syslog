@@ -1,0 +1,26 @@
+<!-- Dummy message SampleName="ITI-55 XCPD Initiating Gateway audit message"-->
+<?xml version="1.0" encoding="ASCII"?>
+<AuditMessage>
+
+	<EventIdentification EventOutcomeIndicator="0" EventDateTime="${timeStamp}" EventActionCode="E">
+		<EventID code="110112" codeSystemName="DCM" displayName="Query" />
+		<EventTypeCode code="ITI-55" codeSystemName="IHE Transactions" displayName="Cross Gateway Patient Discovery" />
+	</EventIdentification>
+
+	<ActiveParticipant UserID="wsaReplyToContents" AlternativeUserID="BR-549" UserIsRequestor="true" NetworkAccessPointTypeCode="1" NetworkAccessPointID="server.source.org">
+		<RoleIDCode code="110153" codeSystemName="DCM" displayName="Source" />
+	</ActiveParticipant>
+
+	<ActiveParticipant UserID="bill.martin@company.org" UserIsRequestor="true" />
+
+	<ActiveParticipant UserID="SOAPEndpointURI" UserIsRequestor="false" NetworkAccessPointTypeCode="2" NetworkAccessPointID="123.23.4.55">
+		<RoleIDCode code="110152" codeSystemName="DCM" displayName="Destination" />
+	</ActiveParticipant>
+
+	<AuditSourceIdentification AuditSourceID="DMNB03" AuditEnterpriseSiteID="WC" />
+	
+	<ParticipantObjectIdentification ParticipantObjectTypeCode="2" ParticipantObjectTypeCodeRole="24" ParticipantObjectID="id">
+		<ParticipantObjectIDTypeCode code="ITI-55" codeSystemName="IHE Transactions" displayName="Cross Gateway Patient Discovery" />
+		<ParticipantObjectQuery>VXRpbC5qYXhiTWFyc2hhbFRvU3RyaW5nKGJvZHkp</ParticipantObjectQuery>
+	</ParticipantObjectIdentification>
+</AuditMessage>

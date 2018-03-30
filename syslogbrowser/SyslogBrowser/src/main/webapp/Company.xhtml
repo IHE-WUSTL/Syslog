@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ice="http://www.icesoft.com/icefaces/component">
+    
+    <body>
+        
+        <ui:composition template="./layout/pageTemplate.xhtml">
+            
+             <ui:define name="content">
+
+            <ice:panelTabSet selectedIndex="#{companyBean.selectedTab}"
+                             tabChangeListener="#{companyBean.tabChangeListener}">
+
+               <!-- Add Studies -->
+
+               <ice:panelTab label="Add New Companies">
+
+                  <ice:panelGrid columns="2">
+
+                     <ice:outputLabel value="Name" for="aName"/>
+                     <ice:inputText id="aName" size="25" maxlength="64"
+                                    value="#{companyBean.newEntity.name}"/>
+
+                     <ice:outputLabel value="Contact" for="aContact"/>
+                     <ice:inputText id="aContact" size="25" maxlength="64"
+                                        value="#{companyBean.newEntity.contact}"/>
+
+                     <ice:outputLabel value="Email" for="aEmail"/>
+                     <ice:inputText id="aEmail" size="25" maxlength="64"
+                                        value="#{companyBean.newEntity.contactEmail}"/>
+
+                     <ice:outputLabel value="Phone" for="aPhone"/>
+                     <ice:inputText id="aPhone" size="25" maxlength="64"
+                                        value="#{companyBean.newEntity.contactPhone}"/>
+
+                     <ice:commandButton value="OK"
+                                        actionListener="#{companyBean.addOK}"/>
+                     <ice:commandButton value="Cancel"
+                                        actionListener="#{companyBean.addCancel}"/>
+                  </ice:panelGrid>
+               </ice:panelTab>
+
+
+               <ice:panelTab label="Modify Companies">
+
+                  <!-- Show table of existing companies to select one for modification -->
+
+                  <ice:panelGroup rendered="#{companyBean.renderSelect()}">
+
+                     <ice:panelGrid columns="2">
+
+                        <ice:dataTable id="selectTable"
+                                       var="row"
+                                       value="#{companyBean.all}"
+                                       scrollable="true"
+                                       scrollHeight="310px"
+                                       columnWidths="400px, 300px"
+                                       sortColumn="#{companyBean.sortColumnName}"
+                                       sortAscending="#{companyBean.ascending}">
+                           <f:facet name="header">
+                              <ice:outputText value="Companies" style="text-align: center"/>
+                           </f:facet>
+
+                           <ice:column style="width: 400px">
+
+                              <ice:rowSelector id="selected"
+                                               value="#{row.selected}"
+                                               selectionAction="#{companyBean.Selected}"
+                                               preStyleOnSelection="true"/>
+
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="name">
+                                    <ice:outputText value="Company Name"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{row.name}"/>
+                           </ice:column>
+
+                           <ice:column style="width: 300px">
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="contact">
+                                    <ice:outputText value="Contact Name"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{row.contact}"/>
+                           </ice:column>
+
+                        </ice:dataTable>
+
+                        <ice:outputText rendered="#{companyBean.renderMessage1()}"
+                                        value="#{companyBean.message(0)}"/>
+                        <ice:outputText rendered="#{companyBean.renderMessage2()}"
+                                        value="#{companyBean.message(1)} #{company.name}"/>
+
+                     </ice:panelGrid>
+
+                     <!-- Action buttons -->
+
+                     <ice:panelGrid rendered="#{companyBean.renderCommandButtons()}"
+                                    columns="3">
+
+                        <ice:commandButton value="Update company"
+                                           actionListener="#{companyBean.chg}"/>
+                        <ice:commandButton value="Delete company"
+                                           actionListener="#{companyBean.del}"/>
+                     </ice:panelGrid>
+
+                  </ice:panelGroup>
+
+                  <!-- Modifications to company data -->
+
+                  <ice:panelGrid rendered="#{companyBean.renderModify()}"
+                                 columns="2">
+
+                     <ice:outputLabel value="Name" for="cName"/>
+                     <ice:inputText id="cName" size="25" maxlength="64"
+                                    value="#{companyBean.chg.name}"/>
+
+                     <ice:outputLabel value="Contact" for="cContact"/>
+                     <ice:inputText id="cContact" size="25" maxlength="64"
+                                        value="#{companyBean.chg.contact}"/>
+
+                     <ice:outputLabel value="Email" for="cEmail"/>
+                     <ice:inputText id="cEmail" size="25" maxlength="64"
+                                        value="#{companyBean.chg.contactEmail}"/>
+
+                     <ice:outputLabel value="Phone" for="cPhone"/>
+                     <ice:inputText id="cPhone" size="25" maxlength="64"
+                                        value="#{companyBean.chg.contactPhone}"/>
+
+                        <ice:commandButton value="Update Company"
+                                           actionListener="#{companyBean.chgOk}"/>
+                        <ice:commandButton value="Cancel Update"
+                                           actionListener="#{companyBean.chgDelCancel}"/>
+
+                  </ice:panelGrid>
+
+                  <!-- Delete company -->
+
+                  <ice:panelGrid rendered="#{companyBean.renderDelete()}"
+                                 columns="2">
+
+                     <ice:panelGrid rendered="#{companyBean.renderDelete()}"
+                                    columns="2">
+
+                        <ice:outputText value="Name"/>
+                        <ice:outputText value="#{companyBean.chg.name}"/>
+
+                        <ice:outputText value="Contact Name"/>
+                        <ice:outputText value="#{companyBean.chg.contact}"/>
+
+                        <ice:outputText value="Contact Email"/>
+                        <ice:outputText value="#{companyBean.chg.contactEmail}"/>
+
+                        <ice:outputText value="Contact Phone"/>
+                        <ice:outputText value="#{companyBean.chg.contactPhone}"/>
+
+                        <ice:commandButton value="Delete this Company"
+                                           actionListener="#{companyBean.delOk}"/>
+                        <ice:commandButton value="Cancel"
+                                           actionListener="#{companyBean.chgDelCancel}"/>
+                     </ice:panelGrid>
+                     <ice:outputText value="#{companyBean.message(2)}" escape="false"/>
+                  </ice:panelGrid>
+
+
+
+
+               </ice:panelTab>
+
+            </ice:panelTabSet>
+         </ui:define>
+
+        </ui:composition>
+        
+    </body>
+</html>

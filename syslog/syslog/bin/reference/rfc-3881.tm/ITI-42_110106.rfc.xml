@@ -1,0 +1,28 @@
+<!-- User message based SampleName="ITI-42 Document Repository or Source/Repository audit message" -->
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AuditMessage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <EventIdentification EventActionCode="R" EventDateTime="${timeStamp}" EventOutcomeIndicator="8">
+        <EventID code="110106" displayName="Export" codeSystemName="DCM"/>
+        <EventTypeCode code="ITI-42" codeSystemName="IHE Transactions" displayName="Register Document Set-b"/>
+    </EventIdentification>
+    
+    <ActiveParticipant UserID="br-549" UserIsRequestor="true" AlternativeUserID="2877" NetworkAccessPointTypeCode="2" NetworkAccessPointID="127.0.0.1">
+        <RoleIDCode code="110153" codeSystemName="DCM" displayName="Source"/>
+    </ActiveParticipant>
+    
+    <ActiveParticipant UserID="http://ilinksys-060:1125/XdsService/XDSRepository" UserIsRequestor="false" NetworkAccessPointTypeCode="2" NetworkAccessPointID="127.0.0.1">
+        <RoleIDCode code="110152" codeSystemName="DCM" displayName="Destination"/>
+    </ActiveParticipant>
+    
+    <AuditSourceIdentification AuditSourceID="XDSRepository@ILINKSYS-060"/>
+    
+    <ParticipantObjectIdentification ParticipantObjectTypeCode="1" ParticipantObjectTypeCodeRole="1" ParticipantObjectID="Q ID">
+        <ParticipantObjectIDTypeCode code="2" codeSystemName="RFC-3881" displayName="Patient Number"/>
+    </ParticipantObjectIdentification>
+    
+    <ParticipantObjectIdentification ParticipantObjectTypeCode="2" ParticipantObjectTypeCodeRole="20" ParticipantObjectID="Q ID">
+        <ParticipantObjectIDTypeCode code="urn:uuid:a54d6aa5-d40d-43f9-88c5-b4633d873bdd" codeSystemName="IHE XDS Metadata" displayName="submission set classificationNode"/>
+    </ParticipantObjectIdentification>
+    
+</AuditMessage>

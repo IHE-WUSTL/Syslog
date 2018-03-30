@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- ****************************************************************
+     * Custom builder processes the Schematron files in IHEValidation
+     * to prepare them for use in the SyslogCollector. Builder is 
+     * integrated into the Eclipse build system
+     ****************************************************************
+    * The validation schema files for the various IHE transactions are located
+    * in the IHEValidation directory. Each IHE transaction is represented by a
+    * sub directory whose name begins with the EventTypeCode code, for example,
+    * "ITI-42 Register Document Set-b". Each audit event type within that
+    * EventType is represented by a sub directory within the EventType
+    * directory, whose name is the EventId code value, for example, "110106".
+    * The validation file(s) for this EventType code & EventID code combination
+    * are placed in this later sub directory. Because of the differences between
+    * the schemas specified in RFC-3881 and DICOM PS 3.15, schematrons for these
+    * schemas contain a trailing R or D in their name indicating which schema
+    * they are for. mt01R.sch indicates a schematron for an RFC-3881 format
+    * message, mt01D.sch for a DICOM format message. In many cases the
+    * differences are minor, and the build process can generate the schematron
+    * for one format from the schematron for the other format. These generated
+    * schematrons are designated with a trailing G in their name. For example,
+    * if mt01R.sch exists, but mt01D.sch does not, the build process will create
+    * an mt01DG.sch. Generated .sch files are deleted during a clean. In some
+    * cases, Schematron validation is only possible for one of the schemas,
+    * typically the dicom one.  A tag file with the extension .none indicates
+    * that no schematron for that type is available.  for example, if mt01D.sch
+    * and mt01R.none exist, no RFC-3881 schematron will be generated, and 
+    * validation will not be available for RFC-3881 format messages of this 
+    * type. If more than one validation file is present for a given format, the 
+    * files will be applied in alpha order by the file name. Schematron files 
+    * have the file name extension .sch. 
+     
+      -->
+
+<project name="syslog" default="build" basedir="../../">
+
+	<property name="package" value="SyslogCollector" />
+	<property name="ant.enable.asserts" value="true" />
+
+	<property name="lib.dir" value="lib" />
+
+	<!-- location of ant contrib tasks -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${lib.dir}/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<property name="run.dir" value="run/${package}" />
+
+	<!-- Validate rundirectory via tag file -->
+	<assert message="${package}.Directory file not found.">
+		<bool>
+			<available file="${run.dir}" type="dir" />
+		</bool>
+	</assert>
+
+	<!-- Validate ini file exists -->
+	<assert message="${package}.ini file not found.">
+		<bool>
+			<available file="${run.dir}/${package}.ini" type="file" />
+		</bool>
+	</assert>
+
+	<property file="${run.dir}/${package}.ini" />
+
+	<!-- Get IHEValidation directory from .ini file -->
+	<if>
+		<matches string="${IHEValidationDirectory}" pattern="^/" />
+		<then>
+			<property name="validation.dir" value="${IHEValidationDirectory}" />
+		</then>
+		<else>
+			<property name="validation.dir" value="${run.dir}/${IHEValidationDirectory}" />
+		</else>
+	</if>
+
+	<property name="ref.dir" value="${run.dir}/schematron" />
+	<property name="saxon" value="saxon9he.jar" />
+
+	<path id="saxon.classpath">
+		<pathelement location="${lib.dir}/${saxon}" />
+	</path>
+
+	<target name="cleanall" depends="clean" />
+
+	<target name="clean">
+		<delete>
+			<fileset dir="${validation.dir}">
+				<include name="**/*.sch.xsl" />
+				<include name="**/*.stp1" />
+				<include name="**/*.stp2" />
+				<include name="**/*G.sch" />
+			</fileset>
+		</delete>
+	</target>
+
+	<!-- build xsl files from schematron files -->
+	<target name="build">
+
+		<!-- clear working files -->
+		<delete>
+			<fileset dir="${validation.dir}">
+				<include name="**/*.stp1" />
+				<include name="**/*.stp2" />
+			</fileset>
+		</delete>
+
+		<!-- process every R.sch file (non-generated RFC-3881 schematron) -->
+		<foreach target="rfctodcm" param="infile">
+			<fileset dir="${validation.dir}">
+				<include name="**/*R.sch" />
+			</fileset>
+		</foreach>
+
+		<!-- process every D.sch file (non-generated DICOM ps 3.15 schematron) -->
+		<foreach target="dcmtorfc" param="infile">
+			<fileset dir="${validation.dir}">
+				<include name="**/*D.sch" />
+			</fileset>
+		</foreach>
+
+		<!-- process every .sch file in the IHEValidationDirectory tree -->
+		<foreach target="schtoxsl" param="schfile">
+			<fileset dir="${validation.dir}">
+				<include name="**/*.sch" />
+			</fileset>
+		</foreach>
+
+	</target>
+
+	<!-- Takes an rfc-3881 schematron (file name mt##R.sch) and generates a
+	     DICOM PS 3.15 schematron from it (file name mt##DG.sch) if no
+	     regular DICOM schematron file exists (mt##D.sch) 
+	 -->
+	<target name="rfctodcm">
+
+		<!-- Get root schematron name (mt##) -->
+		<propertyregex property="root" input="${infile}" regexp="(.*)R\.sch" select="\1" casesensitive="false" />
+
+		<property name="remfile" value="${root}RG.sch" />
+		<property name="regfile" value="${root}D.sch" />
+		<property name="genfile" value="${root}DG.sch" />
+		<property name="nonefile" value="${root}D.none" />
+
+		<!-- Since we have mt##R.sch, a generated version (mt##RG.sch) should be deleted -->
+		<delete file="${remfile}" />
+      <delete file="${remfile}.xsl" />
+
+		<if>
+			<!-- If mt##D.none exists, no mt##DG.sch will be generated -->
+			<resourceexists>
+				<file file="${nonefile}" />
+			</resourceexists>
+			<then>
+				<echo message="${nonefile} exists. ${genfile} will not be generated" />
+				<delete file="${genfile}" />
+            <delete file="${genfile}.xsl" />
+			</then>
+			<!-- if mt##D.sch exists, no mt##DG.sch will be generated -->
+			<elseif>
+				<resourceexists>
+					<file file="${regfile}" />
+				</resourceexists>
+				<then>
+					<echo message="${regfile} exists. ${genfile} will not be generated" />
+					<delete file="${genfile}" />
+	            <delete file="${genfile}.xsl" />
+				</then>
+			</elseif>
+			<!-- generate mt##DG.sch, if it doesn't exist or is out-of-date. -->
+			<else>
+				<delete file="${regfile}.xsl"/>
+				<outofdate>
+					<sourcefiles>
+						<fileset dir="${ref.dir}" />
+						<file file="${infile}" />
+					</sourcefiles>
+					<targetfiles>
+						<file file="${genfile}" />
+					</targetfiles>
+
+					<deletetargets all="true" />
+
+					<sequential>
+
+						<xslt classpathref="saxon.classpath" style="${ref.dir}/iso_rfctodcm.xsl" in="${infile}" out="${genfile}" />
+
+					</sequential>
+
+				</outofdate>
+			</else>
+		</if>
+
+	</target>
+
+	<!-- Takes an DICOM PS 3.15 schematron (file name mt##D.sch) and generates a
+        RFC-3881 schematron from it (file name mt##RG.sch) if no
+        regular DICOM schematron file exists (mt##R.sch)  
+    -->
+	<target name="dcmtorfc">
+
+		<!-- Get root schematron name (mt##) -->
+		<propertyregex property="root" input="${infile}" regexp="(.*)D\.sch" select="\1" casesensitive="false" />
+
+		<property name="remfile" value="${root}DG.sch" />
+		<property name="regfile" value="${root}R.sch" />
+		<property name="genfile" value="${root}RG.sch" />
+		<property name="nonefile" value="${root}R.none" />
+
+		<!-- Since we have mt##R.sch, a generated version (mt##RG.sch) should be deleted -->
+		<delete file="${remfile}" />
+      <delete file="${remfile}.xsl" />
+
+		<if>
+			<!-- If mt##R.none exists, no mt##RG.sch will be generated -->
+			<resourceexists>
+				<file file="${nonefile}" />
+			</resourceexists>
+			<then>
+				<echo message="${nonefile} exists. ${genfile} will not be generated" />
+				<delete file="${genfile}" />
+            <delete file="${genfile}.xsl" />
+			</then>
+			<!-- if mt##R.sch exists, not mt##RG.sch will be generated -->
+			<elseif>
+				<resourceexists>
+					<file file="${regfile}" />
+				</resourceexists>
+				<then>
+					<echo message="${regfile} exists. ${genfile} will not be generated" />
+					<delete file="${genfile}" />
+	            <delete file="${genfile}.xsl" />
+				</then>
+			</elseif>
+			<!-- generate mt##DG.sch, if it doesn't exist or is out-of-date. -->
+			<else>
+            <delete file="${regfile}.xsl"/>
+				<outofdate>
+					<sourcefiles>
+						<fileset dir="${ref.dir}" />
+						<file file="${infile}" />
+					</sourcefiles>
+					<targetfiles>
+						<file file="${genfile}" />
+					</targetfiles>
+
+					<deletetargets all="true" />
+
+					<sequential>
+
+						<xslt classpathref="saxon.classpath" style="${ref.dir}/iso_dcmtorfc.xsl" in="${infile}" out="${genfile}">
+						</xslt>
+
+					</sequential>
+
+				</outofdate>
+			</else>
+		</if>
+
+	</target>
+
+	<!-- Generate xsl file from sch file -->
+	<target name="schtoxsl">
+
+		<!-- process if .sch file or any of the schematron processing files are newer -->
+		<outofdate>
+			<sourcefiles>
+				<fileset dir="${ref.dir}" />
+				<file file="${schfile}" />
+			</sourcefiles>
+			<targetfiles>
+				<file file="${schfile}.xsl" />
+			</targetfiles>
+
+			<deletetargets all="true" />
+
+			<sequential>
+
+				<!-- expand inclusions -->
+				<xslt classpathref="saxon.classpath" style="${ref.dir}/iso_dsdl_include.xsl" in="${schfile}" out="${schfile}.stp1">
+				</xslt>
+
+				<!-- expand abstract patterns -->
+				<xslt classpathref="saxon.classpath" style="${ref.dir}/iso_abstract_expand.xsl" in="${schfile}.stp1" out="${schfile}.stp2">
+				</xslt>
+
+				<!-- compile it -->
+				<xslt classpathref="saxon.classpath" style="${ref.dir}/iso_svrl_for_xslt2.xsl" in="${schfile}.stp2" out="${schfile}.xsl">
+				</xslt>
+
+			</sequential>
+
+		</outofdate>
+
+		<!-- clear working files -->
+		<delete>
+			<fileset dir="${validation.dir}">
+				<include name="**/*.stp1" />
+				<include name="**/*.stp2" />
+			</fileset>
+		</delete>
+
+	</target>
+
+</project>

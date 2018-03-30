@@ -1,0 +1,314 @@
+**********************************************************************
+* syslog software notes                                      R Moulton
+**********************************************************************
+SyslogCollector
+
+Set up as an Eclipse project
+
+compiled with SUN jdk.1.7.
+
+NOTE: Can be compiled with earlier versions of Sun Java > 1.4.
+The 1.5 java is packaged with jaxp 1.3, but jaxp 1.4 is needed for
+this project.  In order to accomplish this, the jaxp 1.4 jar files,
+jaxp-api.jar and jaxp-ri.jar, should be put into the JRE lib/endorsed 
+folder.  
+
+Main class: gov.nist.syslog.SyslogCollector
+
+Requires a "run directory", which can be the current directory at the
+time SyslogCollector is run, or passed as a command line parameter.
+See gov.nist.syslog.util.Util#processMainArguments for details.
+
+A run directory has been set up as part of the syslog project, at
+syslog/run/SyslogCollector.
+
+The run directory contains:
+
+   File: SyslogCollector.Directory. This is a tag file, checked by the
+         program to insure that it is in a valid run directory.
+   File: SyslogCollector.ini. This is a Windows .ini style parameter
+         file. See this file for further documentation on parameter settings.
+   File: rfc3881.xsd. The RFC 3881 syslog message schema. This has been 
+         slightly modified to add tags needed by ATNA for DICOM Supplement 95
+         but not included in the RFC 3881 schema. See this file for further
+         documentation of these changes.
+   File: dicomLCD.xsd. The DICOM PS3.15 Annex A.5.1 schema, modified to remove
+         some requirements (for testing only) which were considered to be too
+         strict.  See "RFC-3881 to DICOM Message changes.odt" in the reference
+         directory for a discussion of these changes. The unaltered DICOM schema
+         in Relax NG format (dicom.rnc) and in xml schema format (dicom.xsd) are
+         also in the reference directory.
+   File: server.keystore. The server side certificate keystore for TLS 
+         connections. The actual name of this file is is given by the "Keystore" 
+         entry in the SyslogCollector.ini file.
+   File: schematron-build.xml. This is an ant build file which will build the
+         schematron .xsl files from the from the .sch files. It is included as 
+         a builder in the Eclipse project setup, and will run at build and 
+         partial build automatically.
+   File: log4j.properties.
+   File: run.sh. A bash shell script to run the SyslogCollector from the
+         command prompt. 
+   File: run.bat. A Windows cmd script file to run the SyslogCollector from the
+         command prompt.
+         
+   Directory: IHEValidation. Contains a subdirectory for each ATNA message
+   		Event Type Code (AuditMessage/EventIdentification/EventTypeCode@code).
+   		For most ATNA messages the Event Type is the IHE Transaction code
+   		(e.g. ITI-21). Currently, the one exception to this is the Get User
+   		Authentication (ITI-2) transaction, for which the Event Types and 
+   		therefore the directories are 110122 (Login) and 110123 (Logout). 
+   		These directories in turn contain a subdirectory for each ATNA message 
+   		Event ID Code (AuditMessage/EventIdentification/EventID@code) for 
+         which ATNA messages exist with that combination of Event Type Code and
+         Event ID Code. For example, the directory: IHEValidation/ITI-42/110106
+         exists for ATNA messages with Event Type ITI-42 and Event ID 110106
+         (Register Document Set-b Repository / Source Repository Audit Message).
+         Each such directory contains ATNA message validation files for those 
+         messages.
+         
+   Directory:schematron. Contains the .xsl files required to convert schematron
+         .sch validation files to .xsl validation files. These are used by the
+         schematron-build.xml ant build file.
+         
+   Directory:messageDirectory. Used to store received messages and evaluations
+         in text format if the "StoreMessages" entry in the SyslogCollector.ini
+         file is set to "YES". This is done in user installations which do not
+         implement the syslog database. See documentation in the .ini file.
+         
+ABNF Parsing
+
+   Syslog messages are formatted IAW RFC-3164 (BSD Syslog Protocol) or RFC-5424
+   (Syslog Protocol); Both of these RFC's define their formats in Augmented
+   Backus-Naur Form (ABNF) as described in RFC-5234. The grammars for these 
+   formats have been included in the syslog/reference directory as 
+   syslog3641.abnf and syslog5424.abnf for reference.
+   
+   Aparse 2.0 (www.parse2.com) was used to generate java classes which are used
+   to validate, parse, and access messages in these formats. The classes are in
+   the packages gov.nis.syslog.rfc3641Parser and gov.nis.syslog.rfc5424Parser.
+   These classes, not aparse itself, are used by the syslog collector.
+   
+Schema Validation
+
+   The xml payloads of syslog messages are validated against both rfc3881.xsd
+   and dicomLCD.xsd (see descriptions in the run directory section above). If
+   the xml payload validates successfully against one of these schemas (it can't
+   validate successfully against both) it is considered to be in that format, 
+   the other schema file is considered to be "not applicable", and validation
+   continues as described in Schematron Validation below. If the xml payload
+   fails validation against both schemas validation stops at this point. The 
+   errors from both validations are recorded; it is up to the tester to 
+   determine which are relevant.
+   
+   Trang (www.thaiopensource.com/relaxng/trang.html) version 20091111 was used
+   to generate a W3C XML Schema, (dicom.xsd) from the Relax NG schema 
+   (dicom.rnc). The dicom.xsd was then modified to create dicomLCD.xsd which is 
+   used by the Syslog Collector to validate message xml payloads.
+   
+   NOTE: Users who wish to implement private extensions to rfc3881.xsd or
+   dicomLCD.xsd may do so by modifying the file itself or replacing it with
+   their own schema file. The name of the schema file should be entered in the
+   SyslogCollector.ini file as the value of the RFC3881SchemaFile parameter or
+   DICOMSchemaFile parameter, as appropriate. The changed file named must be a 
+   W3C XML Schema file. If you need to convert to this format, trang can be 
+   used. The trang jar file is included in the /lib directory for convenience. 
+   Instructions for using trang are at (http://www.thaiopensource.com/relaxng/
+   trang-manual.html).
+   
+Schematron Validation
+
+	See www.schematron.com/implementation.html. Saxon 9 (XSLT 2) is used by the  
+	schematron-build.xml ant file to generate .xsl files from the schematron 
+	.sch files during the build process. These files are then used by the 
+	SyslogCollector to validate the .xml messages and generate error messages.
+	
+	Schematron validation files are named using the following format:
+	
+	   mt##  - Indicating a message type and number. the number is used to 
+	           distinguish message types and to order them.
+	   [R|D] - Indicating whether the schematron was developed for an (R)FC3881
+	           schema compliant message or a (D)ICOM Ps 3.15 schema compliant
+	           message.
+	   G?    - If the Schematron was generated by the build process.
+	   .sch  - Indicating that this is a schematron file.
+	   	
+	During the build process, schematron-build.xml passes through all of the
+	EventType/EventID subdirectories in the IHEValidation directory.  In these
+	directories, files ending in .sch are ISO Schematron files for ATNA messages
+	which have the given Event Type and Event ID. 
+	
+	The build first looks to see if both mt##D.sch and mt##R.sch files exists for
+	the the message type. If only one of these exist, it attempts to generate the
+	other one, which would be written to a generated type file. For example, if
+	mt01D.sch existed, but mt01R.sch did not exist, the build would try to 
+	generate an "R version" of the schematron from the "D version". If 
+	successful, that version would be stored as mt01RG.sch. In some instances
+	this cannot be done, so only one version of the schematron would exist. If
+	both the mt##R.sch and the mt##D.sch exist for a message type, this step
+	is skipped.
+	
+	The build then generates an .xsl file for each .sch. 
+	
+	Transaction names are contained in corresponding .dat files (for example, 
+	mt01.dat would have the ATNA message name for mt01R.sch and mt01D.sch).   
+
+How the SyslogCollector works:
+
+   On startup, the schema files and all the .xsl validation files in the
+   IHEValidation directory tree (along with their message names) are loaded 
+   and compiled.
+   
+   Separate server threads are created for each UPD, TCP, and TLS port listed
+   in the SyslogCollector.ini file.
+   
+   UPD processing: 
+   
+      A separate MessageProcessingThread is created for each received Datagram. 
+      Each Datagram is expected to contain one message, which is processed by 
+      this thread (see description below).
+      
+   TCP and TLS processing:
+   
+      A separate TCPConnectionThread is created for each connection made.
+      
+      TLS handshaking is performed for TLS connections.
+      
+      Data is received on the connection as it becomes available.  If no data is
+      received for 5 minutes, the connection is closed.
+      
+      Received data is expected to be a stream of one or more audit messages,
+      each being preceded by an integer character count and a single space.
+      
+      As complete messages are available, they are processed by a 
+      MessageProcessingThread, running in the TCPConnectionThread.
+      
+   MessageProcessingThread processing:
+   
+      MessageProcessingThread receives a single complete syslog message string.
+      
+      The message is parsed against the ABNF grammar in RFC 5242.
+      
+      If RFC 5242 parsing fails, the message is parsed against the ABNF
+      grammar in RFC 3641, the results are stored, and processing is complete.
+      
+      If RFC 5242 parsing succeeds the contents of the MSG component (the xml
+      audit message) are extracted for further processing. 
+      
+      From here on, processing continues until complete or an error occurs, at 
+      which point the results are stored for browsing.
+      
+      Checked for valid xml.
+      
+      Parsed against the RFC 3881 schema. if this passes, the DICOM PS 3.15
+      schema is marked as "not applicable" and validation continues with the
+      next step. If RFC 3881 schema validation fails the message is parsed 
+      against the DICOM schema. If this passes, the RFC 3881 schema is marked as
+      "not applicable" and validation continues with the next step. If neither
+      validation is successful, validation stops at this point; Errors from both
+      validation attempts are listed - the tester should consider only the
+      relevant ones.
+      
+      The AuditMessage/EventIdentification/EventTypeCode@code and
+      AuditMessage/EventIdentification/EventId@code values are extracted.
+      
+      If message validation .xsl files are available for this combination of
+      Event Type and Event ID, it is parsed against them.
+      
+      NOTE: In many cases, more than one ATNA message type exists for a single
+      combination of Event Type and Event ID. In the "real world" these could
+      be distinguished by their source, but this is not possible for our test
+      Syslog Collector.  In these cases, the message xml is validated against
+      all the message types, and all results are reported. It is assumed that
+      the user will know which type of message theirs is when they are looking
+      in the Syslog message browser.
+      
+      The message and the results of all validations which could be performed
+      are stored in the syslog DB, along with the connection IP and port 
+      information, which is used to retrieve them in viewer.
+      
+Substantial javadoc and process comments are located in the code.
+
+================================================================================
+SyslogSender
+
+Part of the syslog project on sourceforge. Set up as an Eclipse project
+
+compiled with Sun jdk.1.7
+
+Main class: gov.nist.syslog.SyslogSender
+
+Requires a "run directory", which can be the current directory at the
+time SyslogSender is run, or passed as a command line parameter.
+See gov.nist.syslog.util.Util#processMainArguments for details.
+
+A run directory has been set up as part of the syslog project, at
+syslog/run/SyslogSender.
+
+The run directory contains:
+
+   File: SyslogSender.Directory. This is a tag file, checked by the
+         program to insure that it is in a valid run directory.
+   File: SyslogSender.ini. This is a Windows .ini style parameter
+         file. See this file for further documentation on parameter settings.
+   File: client.keystore. The client side certificate keystore for TLS. The
+         actual name of this file is is given by the "Keystore" entry in the
+         SyslogSender.ini file.
+   File: log4j.properties.
+   File: run.sh. A bash shell script to run the SyslogSender from the
+         command prompt. 
+   File: run.bat. A Windows cmd script to run the SyslogSender from the command
+         prompt.
+   File: testMsg.xml. A sample audit message xml payload which can be sent 
+         running SyslogSender from the command prompt. See the SyslogSender.ini
+         comments on the "MessageFile" key for details.
+   File: testMsg.txt. A sample audit message in RFC 5424 format which can be 
+         sent running SyslogSender from the command prompt. See the 
+         SyslogSender.ini comments on the "MessageFile" key for details.
+         
+   Directory: tm. Contains various test messages in .xml files.
+   
+   NOTE: As of release 2.0, all test messages are in DICOM PS 3.15 schema form.
+   
+   How the SyslogSender works:
+   
+       The SyslogSender can work in the background, driven by the SyslogSender
+       web application. See documentation for this on the IHE wiki at:
+       ihewiki.wustl.edu/wiki/index.php/Syslog_Sender.
+       
+       Run from the command line, using run.sh or run.bat:
+       
+           Determines the SyslogCollector server and port number to send to
+           from the entries in the SyslogSender.ini.
+           
+           Retrieves the file name of the message to send from the .ini file
+           "MessageFile" key entry. Reads in the contents of the file.
+               
+           If the message file name ends in ".xml", a header of the form:
+           "<85>1 ${timeStamp} ${hostName} ${appName} ${procId} IHE+RFC-3881 - "
+           is added, as described in RFC 5424 6.2.           
+           
+           Inspects the message contents for 'parameters' of the form
+           ${parameterName}. If these are found, they are replaced based on the
+           parameter name as follows:
+           
+               hostName - With the canonical name of the host running 
+                          SyslogSender.
+               timeStamp - With the time the message is sent in RFC 3339 format.
+                          "yyyy-MM-dd'T'HH:mm:ss.SSSZ".
+               procId - With the current process id.
+               appName - With "SyslogSender".
+           
+           If the message is being sent using TCP or TLS, the message length is
+           calculated and a message length prefix is added, as described in 
+           RFC 5424 6.1.
+           
+           An attempt to send the message is made. Logging is in accord with the
+           settings in log4j.properties.
+           
+           Program exits after one message sent.
+           
+           
+      
+      
+      
+      

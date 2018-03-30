@@ -1,0 +1,4 @@
+dev: Development profile
+Uses internal login.
+Does not use CAS login.
+Console logging.

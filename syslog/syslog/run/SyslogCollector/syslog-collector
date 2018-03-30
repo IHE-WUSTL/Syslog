@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# SyslogCollector autostart
+#
+# description: Auto-starts SyslogCollector
+
+export JAVA_HOME="/opt/jdk1.7.0_03"
+export PATH=$JAVA_HOME/bin:$PATH
+cd /opt/syslog*/run/SyslogCollector
+
+case $1 in
+start)
+    sh ./run.sh 
+    ;;
+stop)  
+    pkill -f SyslogCollector
+    ;;
+restart)
+    pkill -f SyslogCollector
+    sh ./run.sh
+    ;;
+\*)
+    echo "Usage: $0 (start|stop|restart)"
+esac   

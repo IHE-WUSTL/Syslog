@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:ice="http://www.icesoft.com/icefaces/component"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+   <body>
+
+      <ui:composition template="./layout/pageTemplate.xhtml">
+
+         <ui:define name="content">
+               <ice:outputText
+                  rendered="#{!browserBean.ips}"
+                  value="Need to set up user ip addresses to clear messages."/>
+
+               <ice:panelGroup rendered="#{browserBean.ips}">
+                     <f:facet name="header">
+                        <ice:panelGroup>
+                           <ice:outputText value="Audit message Clear settings"/>
+                        </ice:panelGroup>
+                     </f:facet>
+
+                     <ice:panelGrid columns="3">
+
+                        <ice:panelGrid columns="3">
+
+                           <ice:outputLabel value="IP Address" for="fa"/>
+                           <ice:selectOneMenu id="fa"
+                                              value="#{browserBean.user.filters.address}">
+                              <f:selectItems value="#{browserBean.ipsSelections}"/>
+                           </ice:selectOneMenu>
+                           <ice:commandButton
+                              value="Clear IP" style="width: 100%"
+                              actionListener="#{browserBean.clearIpSelection}"/>
+
+                           <ice:outputLabel value="Port" for="fp"/>
+                           <ice:selectOneMenu id="fp"
+                                              value="#{browserBean.user.filters.port}">
+                              <f:selectItems value="#{applicationBean.ports}"/>
+                           </ice:selectOneMenu>
+                           <ice:commandButton
+                              value="Clear Port" style="width: 100%"
+                              actionListener="#{browserBean.clearPortSelection}"/>
+
+                           <ice:outputLabel value="Start Time" for="fst"/>
+                           <ice:outputText
+                              rendered="#{browserBean.defaultStart}"
+                              id="fstd" value="Earliest"/>
+                           <ice:commandButton
+                              rendered="#{browserBean.defaultStart}"
+                              value="Set Start" style="width: 100%"
+                              actionListener="#{browserBean.setStartTime}"/>
+                           <ice:selectInputDate
+                              rendered="#{!browserBean.defaultStart}"
+                              id="fsta"
+                              value="#{browserBean.user.filters.startTime}"
+                              renderMonthAsDropdown="true"
+                              renderYearAsDropdown="true"
+                              renderAsPopup="true">
+                              <f:convertDateTime pattern="MM/dd/yyyy HH:mm"
+                                                 timeZone="#{browserBean.timeZone}"/>
+                           </ice:selectInputDate>
+
+                           <ice:commandButton
+                              rendered="#{!browserBean.defaultStart}"
+                              value="Clear Start" style="width: 100%"
+                              actionListener="#{browserBean.clearStartTime}"/>
+
+                           <ice:outputLabel value="End Time" for="fend"/>
+                           <ice:outputText
+                              rendered="#{browserBean.defaultEnd}"
+                              id="fendd" value="Latest"/>
+                           <ice:commandButton
+                              rendered="#{browserBean.defaultEnd}"
+                              value="Set End" style="width: 100%"
+                              actionListener="#{browserBean.setEndTime}"/>
+                           <ice:selectInputDate
+                              rendered="#{!browserBean.defaultEnd}"
+                              id="fenda"
+                              value="#{browserBean.user.filters.endTime}"
+                              renderMonthAsDropdown="true"
+                              renderYearAsDropdown="true"
+                              renderAsPopup="true">
+                              <f:convertDateTime pattern="MM/dd/yyyy HH:mm"
+                                                 timeZone="#{browserBean.timeZone}"/>
+                           </ice:selectInputDate>
+
+                           <ice:commandButton
+                              rendered="#{!browserBean.defaultEnd}"
+                              value="Clear End" style="width: 100%"
+                              actionListener="#{browserBean.clearEndTime}"/>
+
+                        </ice:panelGrid>
+
+                        <ice:panelGrid columns ="3">
+
+                           <ice:outputLabel value="Event Type" for="fet"/>
+                           <ice:selectOneMenu id="fet"
+                                              value="#{browserBean.user.filters.eventType}">
+                              <f:selectItems value="#{browserBean.eventTypeSelections}"/>
+                           </ice:selectOneMenu>
+                           <ice:commandButton
+                              value="Clear Event Type" style="width: 100%"
+                              actionListener="#{browserBean.clearEventTypeSelection}"/>
+
+                           <ice:outputLabel value="Event Id" for="fei"/>
+                           <ice:selectOneMenu id="fei"
+                                              value="#{browserBean.user.filters.eventId}">
+                              <f:selectItems value="#{browserBean.eventIdSelections}"/>
+                           </ice:selectOneMenu>
+                           <ice:commandButton
+                              value="Clear Event ID" style="width: 100%"
+                              actionListener="#{browserBean.clearEventIdSelection}"/>
+
+                        </ice:panelGrid>
+
+                        <ice:panelGrid
+                           columns="1"
+                           style="padding-left: 25px; width: 300px;">
+
+                           <ice:commandButton
+                              style="border-style: outset; border-width: 3px; border-color: silver; background-color: silver; padding: 3px; width: 100%;"
+                              value="Clear using these settings"
+                              actionListener="#{browserBean.clearMessages}"/>
+
+                        </ice:panelGrid>
+
+                     </ice:panelGrid>
+
+               </ice:panelGroup>
+            </ui:define>
+
+      </ui:composition>
+
+   </body>
+</html>

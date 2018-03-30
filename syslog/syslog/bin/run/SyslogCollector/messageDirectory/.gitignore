@@ -1,0 +1,4 @@
+# track this directory, but not files in it.
+*
+
+!.gitignore

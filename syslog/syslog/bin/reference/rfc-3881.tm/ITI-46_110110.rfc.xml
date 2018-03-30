@@ -1,0 +1,21 @@
+<!-- User message based SampleName="ITI-46 PIX V3 Manager audit message" -->
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AuditMessage>
+	<EventIdentification EventActionCode="R" EventDateTime="${timeStamp}" EventOutcomeIndicator="0">
+		<EventID code="110110" displayName="Patient Record" codeSystemName="DCM"/>
+		<EventTypeCode code="ITI-46" displayName="PIX Update Notification" codeSystemName="IHE Transactions"/>
+	</EventIdentification>
+	<ActiveParticipant UserID="1.2.840.114350.1.13.99998.8734" AlternativeUserID="3678" NetworkAccessPointID="remoteHost?" NetworkAccessPointTypeCode="1">
+		<RoleIDCode code="110153" displayName="Source" codeSystemName="DCM"/>
+	</ActiveParticipant>
+	<ActiveParticipant UserID="BR-549" AlternativeUserID="5216" UserIsRequestor="false" NetworkAccessPointID="10.145.243.142" NetworkAccessPointTypeCode="2">
+		<RoleIDCode code="110152" displayName="Destination" codeSystemName="DCM"/>
+	</ActiveParticipant>
+	<AuditSourceIdentification AuditEnterpriseSiteID="" AuditSourceID="SUN PIX/PDQ">
+		<AuditSourceTypeCode code="1"/>
+	</AuditSourceIdentification>
+	<ParticipantObjectIdentification ParticipantObjectID="GHCADT-JD356^^^IHEGHCADT&amp;1.2.840.114350.1.13.99998.8734&amp;ISO" ParticipantObjectTypeCode="1" ParticipantObjectTypeCodeRole="1">
+		<ParticipantObjectIDTypeCode code="2" displayName="Patient Number" codeSystemName="RFC-3881"/>
+       <ParticipantObjectDetail value="MDAwMDI3NTI=" type="II"/>
+	</ParticipantObjectIdentification>
+</AuditMessage>

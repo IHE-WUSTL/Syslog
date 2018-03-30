@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Custom builder to generate SyslogCollector.zip file. Integrated into 
+	Eclipse. -->
+
+<project name="syslog" default="build" basedir=".">
+
+<property name="package" value="SyslogCollector"/>
+<property name="version" value="syslog-2.1"/>
+	
+	<target name="cleanall" depends="clean" />
+
+	<target name="clean">
+		<delete file="${package}.zip" verbose="true" />
+		<delete dir="${version}"/>
+	</target>
+	
+	<target name="build">
+		<mkdir dir="${version}"/>
+		
+<!--		<copy file="${package}.jar" toDir="${version}/dist"/> -->
+		<copy file="README.TXT" toDir="${version}"/>
+		<copy file="Notes.txt" toDir="${version}"/>
+		<copy file="ReleaseNotes.txt" toDir="${version}"/>
+		
+		<copy toDir="${version}">
+			<fileset dir="${basedir}">
+				<include name="lib/**" />
+        		<include name="run/**" />
+				<include name="dist/**"/>
+			</fileset>
+		</copy>
+		
+		<chmod dir="${version}/run" perm="ugo+rx"
+			includes="**/*.sh"/>
+		
+		<zip destfile="${package}.zip" 
+			  basedir="${basedir}"
+			  includes="${version}/**"/>
+		
+	</target>
+
+</project>

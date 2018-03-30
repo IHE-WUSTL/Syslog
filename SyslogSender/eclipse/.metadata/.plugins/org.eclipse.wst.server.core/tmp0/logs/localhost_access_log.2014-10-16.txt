@@ -1,0 +1,14 @@
+127.0.0.1 - - [16/Oct/2014:11:07:24 -0500] "GET / HTTP/1.1" 404 992
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/ HTTP/1.1" 200 15951
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/resources/css/default.css HTTP/1.1" 200 787
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/resources/css/cssLayout.css HTTP/1.1" 200 1017
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/resources/css/xp/xp.css HTTP/1.1" 200 63989
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/resources/css/erl.css HTTP/1.1" 200 861
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/javax.faces.resource/compat.uncompressed.js.xhtml;jsessionid=19B1C82B34D8B576C3834CEBDCC802FF HTTP/1.1" 200 38529
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/javax.faces.resource/bridge.uncompressed.js.xhtml;jsessionid=19B1C82B34D8B576C3834CEBDCC802FF?v=731993621 HTTP/1.1" 200 117913
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/javax.faces.resource/icepush.uncompressed.js.xhtml;jsessionid=19B1C82B34D8B576C3834CEBDCC802FF?v=731993621 HTTP/1.1" 200 86111
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/javax.faces.resource/jsf.js.xhtml;jsessionid=19B1C82B34D8B576C3834CEBDCC802FF?ln=javax.faces&stage=Development&v=646540082 HTTP/1.1" 200 107637
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/javax.faces.resource/icefaces-compat.uncompressed.js.xhtml;jsessionid=19B1C82B34D8B576C3834CEBDCC802FF HTTP/1.1" 200 482839
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/javax.faces.resource/themes/sam/theme.css.xhtml?ln=icefaces.ace HTTP/1.1" 200 22127
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/resources/imgs/wiki.jpeg HTTP/1.1" 200 6711
+127.0.0.1 - - [16/Oct/2014:11:07:25 -0500] "GET /SyslogSender/resources/imgs/IHE_logo.jpg HTTP/1.1" 200 26587

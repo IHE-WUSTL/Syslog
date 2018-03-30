@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ice="http://www.icesoft.com/icefaces/component">
+    
+    <body>
+        
+        <ui:composition template="./layout/pageTemplate.xhtml">
+            
+            <ui:define name="content">
+                <!-- Modifications to user data -->
+
+                <ice:panelGroup rendered="#{userProfileBean.renderModify()}">
+
+                  <ice:panelGrid columns="2">
+
+                     <ice:outputLabel value="Company" for="cName"/>
+                     <ice:outputText id="cName"
+                                    value="#{userProfileBean.user.company.name}"/>
+
+                     <ice:outputLabel value="User Id" for="cuid"/>
+                     <ice:inputText id="cuid" size="25" maxlength="64"
+                                        value="#{userProfileBean.user.userId}"/>
+
+                     <ice:outputLabel value="User Name" for="cuname"/>
+                     <ice:inputText id="cuname" size="25" maxlength="64"
+                                        value="#{userProfileBean.user.userName}"/>
+
+                     <ice:outputLabel value="Email" for="cEmail"/>
+                     <ice:inputText id="cEmail" size="25" maxlength="64"
+                                        value="#{userProfileBean.user.userEmail}"/>
+
+                     <ice:outputLabel value="Phone" for="cPhone"/>
+                     <ice:inputText id="cPhone" size="25" maxlength="64"
+                                        value="#{userProfileBean.user.userPhone}"/>
+
+                  </ice:panelGrid>
+                   
+                   <ice:panelGrid columns="5">
+
+                        <ice:commandButton value="Update User"
+                                           actionListener="#{userProfileBean.chgOk}"/>
+                        <ice:commandButton value="Change Password"
+                                           actionListener="#{userProfileBean.chgPw}"/>
+                        <ice:commandButton value="Maint Ips"
+                                           actionListener="#{userProfileBean.mntIps}"/>
+                        <ice:commandButton value="Delete user" 
+                                           actionListener="#{userProfileBean.del}"/>
+                        
+                        <ice:commandButton value="Done" action="index"/>
+                      
+                   </ice:panelGrid>
+
+                </ice:panelGroup>
+
+                  <!-- Delete user -->
+
+                  <ice:panelGrid rendered="#{userProfileBean.renderDelete()}"
+                                 columns="2">
+
+                     <ice:panelGrid columns="2">
+
+                        <ice:outputText value="Company"/>
+                        <ice:outputText value="#{userProfileBean.user.company.name}"/>
+
+                        <ice:outputText value="User ID"/>
+                        <ice:outputText value="#{userProfileBean.user.userId}"/>
+
+                        <ice:outputText value="User name"/>
+                        <ice:outputText value="#{userProfileBean.user.userName}"/>
+
+                        <ice:outputText value="Email"/>
+                        <ice:outputText value="#{userProfileBean.user.userEmail}"/>
+
+                        <ice:outputText value="Phone"/>
+                        <ice:outputText value="#{userProfileBean.user.userPhone}"/>
+
+                        <ice:commandButton value="Delete this User" action="index"
+                                           actionListener="#{userProfileBean.delOk}"/>
+                        <ice:commandButton value="Cancel"
+                                           actionListener="#{userProfileBean.chgDelCancel}"/>
+                     </ice:panelGrid>
+                     <ice:outputText value="#{userProfileBean.message(0)}" escape="false"/>
+                  </ice:panelGrid>
+
+                  <!-- Change user password -->
+
+                  <ice:panelGrid rendered ="#{userProfileBean.renderChgPassword()}"
+                                 columns ="2">
+
+                     <ice:outputText value="Company"/>
+                     <ice:outputText value="#{userProfileBean.user.company.name}"/>
+
+                     <ice:outputText value="User ID"/>
+                     <ice:outputText value="#{userProfileBean.user.userId}"/>
+
+                     <ice:outputText value="User name"/>
+                     <ice:outputText value="#{userProfileBean.user.userName}"/>
+
+                     <ice:outputLabel value="New Password" for="cpw1"/>
+                     <ice:inputSecret id="cpw1" size="10" maxlength="10"
+                                    value="#{userProfileBean.user.plainTextPassword}"/>
+
+                     <ice:outputLabel value="Re-enter New Password" for="cpw2"/>
+                     <ice:inputSecret id="cpw2" size="10" maxlength="10"
+                                    value="#{userProfileBean.user.plainTextPasswordRepeat}"/>
+
+                     <ice:panelGrid columns="2">
+
+                        <ice:commandButton value="Update user password"
+                                           actionListener="#{userProfileBean.chgPwOk}"/>
+                        <ice:commandButton value="Cancel"
+                                           actionListener="#{userProfileBean.chgDelCancel}"/>
+                     </ice:panelGrid>
+
+                  </ice:panelGrid>
+
+                  <!-- Maintain user IP addresses -->
+
+                  <ice:panelGrid rendered="#{userProfileBean.renderMaintainIps()}"
+                                 columns="2">
+
+                     <ice:panelGrid columns="1">
+
+                        <ice:outputText value="#{userProfileBean.user.userId}: #{userProfileBean.user.userName}"/>
+                        <ice:outputText value="#{userProfileBean.user.company.name}"/>
+
+                        <ice:panelGrid columns="2">
+                           <ice:outputLabel value="IP Address" for="aip"/>
+                           <ice:inputText id="aip" size="15" maxlength="15"
+                                          partialSubmit="true"
+                                          value="#{userProfileBean.newIp.address}"/>
+                           <ice:outputLabel value="Description" for="aipd"/>
+                           <ice:inputText id="aidp" size="15" maxlength="15"
+                                          value="#{userProfileBean.newIp.description}"/>
+                           <ice:outputText value=" "/>
+                           <ice:panelGrid columns="2">
+
+                              <ice:commandButton value="Add this IP"
+                                                 disabled="#{userProfileBean.disableAddIpButtons()}"
+                                                 actionListener="#{userProfileBean.addIpOk}"/>
+                              <ice:commandButton value="Clear"
+                                                 disabled="#{userProfileBean.disableAddIpButtons()}"
+                                                 actionListener="#{userProfileBean.addIpCancel}"/>
+
+                           </ice:panelGrid>
+
+                        </ice:panelGrid>
+
+                     </ice:panelGrid>
+
+                     <ice:dataTable id ="selTable"
+                                    var="ip"
+                                    value="#{userProfileBean.ips}"
+                                    scrollable="true"
+                                    scrollHeight="310px"
+                                    columnWidths="150px, 300px"
+                                    sortColumn="#{userProfileBean.sortColName}"
+                                    sortAscending="#{userProfileBean.ascend}">
+                           <f:facet name="header">
+                              <ice:outputText value="Ip addresses" style="text-align: center"/>
+                           </f:facet>
+
+                           <ice:column style="width: 150px">
+
+                              <ice:rowSelector id="select"
+                                               value="#{ip.selected}"
+                                               selectionAction="#{userProfileBean.Select}"
+                                               preStyleOnSelection="true"/>
+
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="address">
+                                    <ice:outputText value="IP Address"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{ip.address}"/>
+                           </ice:column>
+
+                           <ice:column style="width: 300px">
+                              <f:facet name="header">
+                                 <ice:commandSortHeader columnName="description">
+                                    <ice:outputText value="Description"/>
+                                 </ice:commandSortHeader>
+                              </f:facet>
+                              <ice:outputText value="#{ip.description}"/>
+                           </ice:column>
+
+                     </ice:dataTable>
+
+                              <ice:commandButton value="Done processing IPs"
+                                                 actionListener="#{userProfileBean.ipDone}"/>
+
+                           <ice:panelGrid columns="2">
+
+                              <ice:commandButton value="Delete selected IP"
+                                                 disabled="#{userProfileBean.disableDelIpButtons()}"
+                                                 actionListener="#{userProfileBean.delIpOk}"/>
+                              <ice:commandButton value="Clear"
+                                                 disabled="#{userProfileBean.disableDelIpButtons()}"
+                                                 actionListener="#{userProfileBean.clearSelect}"/>
+
+                           </ice:panelGrid>
+
+                  </ice:panelGrid>
+
+            </ui:define>
+
+        </ui:composition>
+        
+    </body>
+</html>
